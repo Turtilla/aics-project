@@ -1,0 +1,1 @@
+Contains the [ImageCLEF/IAPR TC 12 Photo Collection](https://www.imageclef.org/photodata).
