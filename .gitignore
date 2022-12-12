@@ -1,0 +1,29 @@
+# Data
+data/*
+
+# Latex
+## Core latex/pdflatex auxiliary files:
+paper/*.aux
+paper/*.lof
+paper/*.log
+paper/*.lot
+paper/*.fls
+paper/*.out
+paper/*.toc
+paper/*.fmt
+paper/*.fot
+paper/*.cb
+paper/*.cb2
+paper/.*.lb
+
+## Bibliography auxiliary files (bibtex/biblatex/biber):
+paper/*.bbl
+paper/*.bcf
+paper/*.blg
+paper/*-blx.aux
+paper/*-blx.bib
+paper/*.run.xml
+
+## Build tool auxiliary files:
+paper/*.fdb_latexmk
+paper/*.synctex.gz
