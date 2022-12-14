@@ -1,0 +1,1 @@
+In this folder you can find both our code and code taken from https://github.com/sdobnik/aics/tree/master/tutorials/03-image-captioning/2022; by the time of the final submission all the contributions will be listed here.
