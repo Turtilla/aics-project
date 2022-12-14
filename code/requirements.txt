@@ -4,3 +4,5 @@ torchaudio
 nltk
 ipykernel
 ipywidgets
+matplotlib
+scikit-image
