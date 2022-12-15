@@ -6,3 +6,4 @@ ipykernel
 ipywidgets
 matplotlib
 scikit-image
+h5py
