@@ -1,5 +1,6 @@
 # Data
-data/*/
+data/*
+!data/README.md
 
 # Latex
 ## Core latex/pdflatex auxiliary files:
