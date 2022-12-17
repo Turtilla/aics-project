@@ -1,19 +1,17 @@
-import os
-import numpy as np
-import h5py
-import json
-import torch
-
-from PIL import Image
-
-from tqdm import tqdm
-from collections import Counter
-from random import seed, choice, sample
-
 import argparse
+import json
+import os
+from collections import Counter
+from random import choice, sample, seed
+
+import h5py
+import numpy as np
+import torch
+from PIL import Image
+from tqdm import tqdm
+
 
 def create_input_files(args):
-    
     '''
     Creates input files for training, validation, and test data.
     '''
@@ -42,8 +40,8 @@ def create_input_files(args):
                 captions.append(c['tokens'])
             else:
                 captions.append(c['tokens'][:args.max_len])
-                
-        # if there were no captions for this image       
+
+        # if there were no captions for this image
         if len(captions) == 0:
             continue
 
@@ -67,7 +65,6 @@ def create_input_files(args):
     assert len(val_image_paths) == len(val_image_captions)
     assert len(test_image_paths) == len(test_image_captions)
 
-
     # Create word map
     # It is always useful to keep the map somewhere saved,
     # because you might need this vocabulary later for re-training and testing
@@ -77,17 +74,15 @@ def create_input_files(args):
     word_map['<start>'] = len(word_map) + 1
     word_map['<end>'] = len(word_map) + 1
     word_map['<pad>'] = 0
-    
 
     # Create a base/root name for your output files
     # Useful because if you are planning to run the scripts multiple times, you would need to make sure you don't mix data from different runs
-    base_filename = args.dataset + '_' + str(args.captions_per_image)  + '_' + str(args.min_word_freq)
+    base_filename = args.dataset + '_' + str(args.captions_per_image) + '_' + str(args.min_word_freq)
 
     # Save word map to a JSON
     with open(os.path.join(args.output_folder, 'wordmap_' + base_filename + '.json'), 'w') as j:
         json.dump(word_map, j)
-        
-    
+
     # Sample captions for each image, save images to HDF5 file, and captions and their lengths to JSON files
     # HDF5 is the format that is typically used to store large and sparse data in language-and-vision tasks
     # one important detail: if you re-create the hdf5 file, make sure you delete the older one
@@ -120,7 +115,7 @@ def create_input_files(args):
                 else:
                     # just take captions as they are
                     captions = imcaps[i]
-                    #captions = sample(imcaps[i], k=args.captions_per_image)
+                    # captions = sample(imcaps[i], k=args.captions_per_image)
 
                 # Sanity check
                 assert len(captions) == args.captions_per_image
@@ -129,13 +124,13 @@ def create_input_files(args):
                 img = Image.open(impaths[i])
                 img = img.resize((256, 256))
                 img = np.transpose(img, (2, 0, 1))
-                                
+
                 # the values of elements in image representation should not be higher than 255
                 assert np.max(img) <= 255
 
                 # Save image to HDF5 file
                 images[i] = img
-                
+
                 # encoding the captions
                 for j, c in enumerate(captions):
                     # Encode captions
@@ -222,7 +217,7 @@ def clip_gradient(optimizer, grad_clip):
                 param.grad.data.clamp_(-grad_clip, grad_clip)
 
 
-def save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
+def save_checkpoint(folder, data_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
                     bleu4, is_best):
     """
     Saves model checkpoint.
@@ -244,7 +239,7 @@ def save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder
              'decoder': decoder,
              'encoder_optimizer': encoder_optimizer,
              'decoder_optimizer': decoder_optimizer}
-    filename = 'checkpoint_' + data_name + '.pth.tar'
+    filename = folder + 'checkpoint_' + data_name + '.pth.tar'
     torch.save(state, filename)
     # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
     if is_best:
@@ -304,9 +299,9 @@ def accuracy(scores, targets, k):
 
 
 if __name__ == '__main__':
-    
+
     parser = argparse.ArgumentParser()
-    
+
     '''
     :param dataset: name of the dataset,
                     one of 'coco', 'flickr8k', 'flickr30k'
@@ -329,9 +324,10 @@ if __name__ == '__main__':
                     all captions need to be of the same size,
                     we basically cut them at some point if they are too long or pad them if they are too short
     '''
-    
+
     parser.add_argument('--dataset', type=str, default='flickr8k')
-    parser.add_argument('--karpathy_json_path', type=str, default='/srv/data/aics/03-image-captioning/data/dataset_flickr8k.json')
+    parser.add_argument('--karpathy_json_path', type=str,
+                        default='/srv/data/aics/03-image-captioning/data/dataset_flickr8k.json')
     parser.add_argument('--image_folder', type=str, default='/srv/data/aics/03-image-captioning/data/flickr8k/Images/')
     parser.add_argument('--captions_per_image', type=int, default=5)
     parser.add_argument('--min_word_freq', type=int, default=10)
@@ -339,5 +335,5 @@ if __name__ == '__main__':
     parser.add_argument('--max_len', type=int, default=100)
 
     arguments = parser.parse_args()
-    
+
     create_input_files(arguments)

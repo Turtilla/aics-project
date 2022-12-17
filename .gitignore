@@ -2,6 +2,10 @@
 data/*
 !data/README.md
 
+# Saved
+saved/*
+!saved/README.md
+
 # Python
 code/__pycache__/
 

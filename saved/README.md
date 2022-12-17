@@ -1,0 +1,1 @@
+This folder contains saved models, checkpoints and other files that wer output running the code.
