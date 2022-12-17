@@ -2,6 +2,9 @@
 data/*
 !data/README.md
 
+# Python
+code/__pycache__/
+
 # Latex
 ## Core latex/pdflatex auxiliary files:
 paper/*.aux
