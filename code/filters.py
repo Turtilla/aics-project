@@ -31,7 +31,7 @@ class RuleBasedRelationFilter(RelationFilter):
         super().__init__()
 
         # Landau English prepositions
-        self.en_preps = [
+        en_preps = [
             # simple spatial relations
             'at', 'on', 'in', 'on', 'off',
             'out', 'by', 'from', 'to',
@@ -59,34 +59,34 @@ class RuleBasedRelationFilter(RelationFilter):
         ]
 
         # Herskovits projective_terms
-        self.en_preps += [(w2, w1+' the '+w2+' of')           for w1 in ['at', 'on', 'to', 'by'] for w2 in ['left', 'right'] ]
-        self.en_preps += [(w2, w1+' the '+w2+' side of')      for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['left', 'right']]
-        self.en_preps += [(w2, w1+' the '+w2+' hand side of') for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['left', 'right']]
-        self.en_preps += [(w2, w1+' the '+w2+' of')           for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['front', 'back', 'side']]
-        self.en_preps += [(w1, 'in '+w1+' of')                for w1 in ['front', 'back']]
-        self.en_preps += [(w1,)                               for w1 in ['before', 'behind']]
-        self.en_preps += [(w1, w1+' of')                      for w1 in ['left', 'right', 'back']]
-        self.en_preps += [(w1,)                               for w1 in ['above', 'below']]
-        self.en_preps += [(w1,)                               for w1 in ['over', 'under']]
-        self.en_preps += [(w2, w1+' the '+w2+' of')           for w1 in ['at', 'on', 'in', 'by'] for w2 in ['top', 'bottom']]
-        self.en_preps += [(w2, w1+' '+w2+' of')               for w1 in ['on'] for w2 in ['top']]
+        en_preps += [(w2, w1+' the '+w2+' of')           for w1 in ['at', 'on', 'to', 'by'] for w2 in ['left', 'right'] ]
+        en_preps += [(w2, w1+' the '+w2+' side of')      for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['left', 'right']]
+        en_preps += [(w2, w1+' the '+w2+' hand side of') for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['left', 'right']]
+        en_preps += [(w2, w1+' the '+w2+' of')           for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['front', 'back', 'side']]
+        en_preps += [(w1, 'in '+w1+' of')                for w1 in ['front', 'back']]
+        en_preps += [(w1,)                               for w1 in ['before', 'behind']]
+        en_preps += [(w1, w1+' of')                      for w1 in ['left', 'right', 'back']]
+        en_preps += [(w1,)                               for w1 in ['above', 'below']]
+        en_preps += [(w1,)                               for w1 in ['over', 'under']]
+        en_preps += [(w2, w1+' the '+w2+' of')           for w1 in ['at', 'on', 'in', 'by'] for w2 in ['top', 'bottom']]
+        en_preps += [(w2, w1+' '+w2+' of')               for w1 in ['on'] for w2 in ['top']]
 
         # missing items?
-        self.en_preps += [('next', 'next to')]
+        en_preps += [('next', 'next to')]
 
         # missing odd variations
-        self.en_preps += [('front', 'on the front of', 'on front of')]
-        self.en_preps += [('left', 'in the left of', 'in left of'),('right', 'in the right of', 'in right of'),]
+        en_preps += [('front', 'on the front of', 'on front of')]
+        en_preps += [('left', 'in the left of', 'in left of'),('right', 'in the right of', 'in right of'),]
 
         # missing 'the'
-        self.en_preps += [(w2, w1+' '+w2+' of')           for w1 in ['at', 'on', 'to', 'by'] for w2 in ['left', 'right'] ]
-        self.en_preps += [(w2, w1+' '+w2+' side of')      for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['left', 'right']]
-        self.en_preps += [(w2, w1+' '+w2+' hand side of') for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['left', 'right']]
-        self.en_preps += [(w2, w1+' '+w2+' of')           for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['front', 'back', 'side']]
-        self.en_preps += [(w2, w1+' '+w2+' of')           for w1 in ['at', 'on', 'in', 'by'] for w2 in ['top', 'bottom']]
+        en_preps += [(w2, w1+' '+w2+' of')           for w1 in ['at', 'on', 'to', 'by'] for w2 in ['left', 'right'] ]
+        en_preps += [(w2, w1+' '+w2+' side of')      for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['left', 'right']]
+        en_preps += [(w2, w1+' '+w2+' hand side of') for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['left', 'right']]
+        en_preps += [(w2, w1+' '+w2+' of')           for w1 in ['at', 'on', 'in', 'to', 'by'] for w2 in ['front', 'back', 'side']]
+        en_preps += [(w2, w1+' '+w2+' of')           for w1 in ['at', 'on', 'in', 'by'] for w2 in ['top', 'bottom']]
 
         # compositional variation
-        self.en_preps += [
+        en_preps += [
             (w2+'_'+w3, w1+_the_+w2+_and_+w3+' of')
             for w1 in ['at', 'on', 'in', 'to', 'by', 'to']
             for _the_ in [' ', ' the ']
@@ -104,11 +104,11 @@ class RuleBasedRelationFilter(RelationFilter):
         ]
 
         # fix the tuple types
-        self.en_preps = [(w,) if not isinstance(w, tuple) else w for w in self.en_preps]
+        en_preps = [(w,) if not isinstance(w, tuple) else w for w in en_preps]
 
         # This will create a ditionary of preposition variations to a simple tocken
         self.composit2simple = dict()
-        self.composit2simple.update({w_alt: w[0] for w in self.en_preps for w_alt in w})
+        self.composit2simple.update({w_alt: w[0] for w in en_preps for w_alt in w})
         self.composit2simple.update({w: w        for w in self.composit2simple.values()})
 
     def has_relation(self, tokenized_caption: list[str]) -> bool:
