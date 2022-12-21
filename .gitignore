@@ -8,6 +8,7 @@ saved/*
 
 # Python
 code/__pycache__/
+code/.ipynb_checkpoints/
 
 # Latex
 ## Core latex/pdflatex auxiliary files:

@@ -1,4 +1,5 @@
 import os
+import string
 from collections import Counter
 from dataclasses import dataclass
 from glob import glob
@@ -42,6 +43,8 @@ class CLEFDataset(Dataset):
         concat_captions: bool = False,  # added by Maria to allow the optional concatenation of multiple captions into one
     ) -> None:
         super(CLEFDataset, self).__init__()
+        self.unknown_words = Counter()
+        
         captions = self._load_captions(annotation_directory, number_images, concat_captions, relation_filter)
         samples = self._load_images(image_directory, captions)
 
@@ -51,7 +54,6 @@ class CLEFDataset(Dataset):
 
         self.samples = self._encode_captions(samples)
 
-        self.unknown_words = Counter()
 
     def _load_captions(self, directory: str, number_images: int, concat_captions: bool, relation_filter: RelationFilter) -> list[CLEFSample]:
         captions: list[CLEFSample] = []
@@ -72,7 +74,10 @@ class CLEFDataset(Dataset):
                 else:
                     first_caption = all_captions[0]
 
-                tokenized_caption = nltk.word_tokenize(first_caption)
+                punctuations = string.punctuation + '``\'\''
+                tokenized_caption = [word.lower() 
+                                     for word in nltk.word_tokenize(first_caption)
+                                     if word not in punctuations]
 
                 image_path = root.find('./IMAGE').text.removeprefix('images/')
                 image_id = image_path.removesuffix('.jpg')
@@ -143,7 +148,7 @@ class CLEFDataset(Dataset):
         if token in self.word_map:
             return self.word_map[token]
         else:
-            self.unknown_words.update(token)
+            self.unknown_words.update([token])
             return self.word_map[UNKNOWN_TOKEN]
 
     def __getitem__(self, index: int) -> CLEFSample:
