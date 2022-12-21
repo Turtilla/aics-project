@@ -51,6 +51,8 @@ class CLEFDataset(Dataset):
 
         self.samples = self._encode_captions(samples)
 
+        self.unknown_words = Counter()
+
     def _load_captions(self, directory: str, number_images: int, concat_captions: bool, relation_filter: RelationFilter) -> list[CLEFSample]:
         captions: list[CLEFSample] = []
 
@@ -141,6 +143,7 @@ class CLEFDataset(Dataset):
         if token in self.word_map:
             return self.word_map[token]
         else:
+            self.unknown_words.update(token)
             return self.word_map[UNKNOWN_TOKEN]
 
     def __getitem__(self, index: int) -> CLEFSample:
