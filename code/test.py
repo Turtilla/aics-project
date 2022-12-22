@@ -13,10 +13,11 @@ from torchvision.transforms import transforms
 
 ### THE FOLLOWING CODE IS TAKEN FROM TEST.IPYNB BY NIKOLAI ILINYKH
 class CaptionTester:
-    def __init__(self, model_path, word_map_path, device, start_token, end_token) -> None:
+    def __init__(self, model_path, word_map_path, device, start_token, end_token, unknown_token) -> None:
         self.device = device
         self.start_token = start_token
         self.end_token = end_token
+        self.unknown_token = unknown_token
 
         # turning a piece of code by Nikolai from test.ipynb into a function
         # Load model
@@ -109,7 +110,12 @@ class CaptionTester:
 
             # Add
             scores = top_k_scores.expand_as(scores) + scores  # (s, vocab_size)
-
+            
+            
+            # exclude unknown token
+            unknown_token_index = self.word_map[self.unknown_token]
+            scores[:, unknown_token_index] = float('-inf')
+            
             # For the first step, all k points will have the same scores (since same k previous words, h, c)
             if step == 1:
                 top_k_scores, top_k_words = scores[0].topk(k, 0, True, True)  # (s)
