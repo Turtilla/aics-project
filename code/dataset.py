@@ -41,21 +41,24 @@ class CLEFDataset(Dataset):
         word_map: dict = None,
         min_frequency=10,
         concat_captions: bool = False,  # added by Maria to allow the optional concatenation of multiple captions into one
+        unk_filter: float = 0.2  # added by Maria for filtering out the captions with more than X% unknown tokens, only works with a pre-loaded wordmap
     ) -> None:
         super(CLEFDataset, self).__init__()
         self.unknown_words = Counter()
+
+        if word_map is not None:  # this needs to be ahead for the UNK filtering, otherwise the word map is generated later
+            self.word_map = word_map
         
-        captions = self._load_captions(annotation_directory, number_images, concat_captions, relation_filter)
+        captions = self._load_captions(annotation_directory, number_images, concat_captions, relation_filter, word_map, unk_filter)
         samples = self._load_images(image_directory, captions)
 
         if word_map is None:
             word_map = self._create_word_map(samples, min_frequency)
-        self.word_map = word_map
-
+        
         self.samples = self._encode_captions(samples)
 
 
-    def _load_captions(self, directory: str, number_images: int, concat_captions: bool, relation_filter: RelationFilter) -> list[CLEFSample]:
+    def _load_captions(self, directory: str, number_images: int, concat_captions: bool, relation_filter: RelationFilter, word_map: dict, unk_filter: float) -> list[CLEFSample]:
         captions: list[CLEFSample] = []
 
         file_pattern = directory + '**/*.eng'
@@ -82,16 +85,42 @@ class CLEFDataset(Dataset):
                 image_path = root.find('./IMAGE').text.removeprefix('images/')
                 image_id = image_path.removesuffix('.jpg')
 
-                if relation_filter.has_relation(tokenized_caption):
-                    captions.append(CLEFSample(
-                        image_id=image_id,
-                        caption=tokenized_caption,
-                        # +2 for start and end token
-                        caption_length=torch.CharTensor([len(tokenized_caption) + 2]),
-                        image_path=image_path
-                    ))
-                else:
-                    continue
+                unk_counter = 0
+                if word_map is not None:  # if there is a word map then this will filter out the unks (hopefully)
+                    
+                    for word in tokenized_caption:
+                        encoded_word = self.get_encoded_token(word)
+                        if encoded_word == 1839:
+                            unk_counter += 1
+                        else:
+                            continue
+
+                    unk_ratio = unk_counter / len(tokenized_caption)
+                    if relation_filter.has_relation(tokenized_caption):
+                        if unk_ratio < unk_filter:
+                            captions.append(CLEFSample(
+                                image_id=image_id,
+                                caption=tokenized_caption,
+                                # +2 for start and end token
+                                caption_length=torch.CharTensor([len(tokenized_caption) + 2]),
+                                image_path=image_path
+                            ))
+                        else:
+                            continue
+                    else:
+                        continue
+                    
+                else:  # if there is no word map
+                    if relation_filter.has_relation(tokenized_caption):
+                            captions.append(CLEFSample(
+                                image_id=image_id,
+                                caption=tokenized_caption,
+                                # +2 for start and end token
+                                caption_length=torch.CharTensor([len(tokenized_caption) + 2]),
+                                image_path=image_path
+                            ))
+                    else:
+                        continue
 
             except ParseError:
                 continue
