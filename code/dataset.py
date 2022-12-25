@@ -3,6 +3,7 @@ import string
 from abc import ABC, abstractmethod
 from collections import Counter
 from dataclasses import dataclass
+from enum import Enum
 from glob import glob
 from xml.etree import ElementTree
 from xml.etree.ElementTree import ParseError
@@ -11,6 +12,7 @@ import nltk
 import torch
 from filters import RelationFilter
 from PIL import Image
+from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
 from torchvision.transforms import transforms
 from tqdm import tqdm
@@ -19,6 +21,13 @@ UNKNOWN_TOKEN = '<unk>'
 START_TOKEN = '<start>'
 END_TOKEN = '<end>'
 PADDING_TOKEN = '<pad>'
+
+class Datasets(Enum):
+    CLEF = 'clef'
+    FLICKR = 'flickr'
+
+    def __str__(self):
+        return self.value
 
 @dataclass(slots=True, kw_only=True)
 class Sample:
@@ -227,3 +236,33 @@ class ImageDataset(Dataset):
 
     def __len__(self) -> int:
         return len(self.samples)
+
+
+def custom_collate(samples: list[Sample]) -> dict:
+    # by Dominik
+    image_ids = []
+    captions = []
+    image_paths = []
+    tokenized_captions = []
+    caption_lengths = []
+    encoded_captions = []
+    images = []
+
+    for sample in samples:
+        image_ids.append(sample.image_id)
+        captions.append(sample.caption)
+        image_paths.append(sample.image_path)
+        tokenized_captions.append(sample.tokenized_caption)
+        caption_lengths.append(sample.caption_length)
+        encoded_captions.append(sample.encoded_caption)
+        images.append(sample.image)
+    
+    return {
+        'image_ids': image_ids,
+        'captions': captions,
+        'caption_lengths': caption_lengths,
+        'tokenized_captions': tokenized_captions,
+        'encoded_captions': pad_sequence(encoded_captions, batch_first=True),
+        'image_paths': image_paths,
+        'images': images
+    }
