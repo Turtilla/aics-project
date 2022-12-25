@@ -56,15 +56,15 @@ class FlickrCaptionLoader(CaptionLoader):
 
         meatdata_file = os.path.join(self.annotation_directory, 'captions.txt')
         with open(meatdata_file, 'r') as f:
-            lines: list[str] = f.readlines()[1:]
-            for line in lines:
-                image_path, caption = line.removesuffix('\n').split(',', maxsplit=1)
-                image_id = image_path.removesuffix('.jpg')
-                captions.append(Sample(
-                    image_id=image_id,
-                    caption=caption,
-                    image_path=image_path
-                ))
+            lines = f.readlines()[1:]
+        for line in lines:
+            image_path, caption = line.removesuffix('\n').split(',', maxsplit=1)
+            image_id = image_path.removesuffix('.jpg')
+            captions.append(Sample(
+                image_id=image_id,
+                caption=caption,
+                image_path=image_path
+            ))
 
         print(f'{len(captions)} captions loaded!')
         return captions
@@ -187,9 +187,10 @@ class ImageDataset(Dataset):
             # TODO correct conversion?
             # error-handling added by Maria
             try:
-                image = Image.open(image_path).resize((256, 256)).convert('RGB')
-                sample.image = transform(image)
-                samples.append(sample)
+                with Image.open(image_path) as img:
+                    image = img.resize((256, 256)).convert('RGB')
+                    sample.image = transform(image)
+                    samples.append(sample)
             except FileNotFoundError:
                 continue
 
