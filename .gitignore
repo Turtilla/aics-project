@@ -9,6 +9,7 @@ saved/*
 # Python
 code/__pycache__/
 code/.ipynb_checkpoints/
+*.pth.tar
 
 # Latex
 ## Core latex/pdflatex auxiliary files:
