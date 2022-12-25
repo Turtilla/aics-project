@@ -1,5 +1,6 @@
 import os
 import string
+from abc import ABC, abstractmethod
 from collections import Counter
 from dataclasses import dataclass
 from glob import glob
@@ -20,119 +21,157 @@ END_TOKEN = '<end>'
 PADDING_TOKEN = '<pad>'
 
 @dataclass(slots=True, kw_only=True)
-class CLEFSample:
+class Sample:
     # by Dominik
     image_id: str
     caption: str
-    caption_length: torch.CharTensor
     image_path: str
+    tokenized_caption: list[str] = None
+    caption_length: torch.CharTensor = 0
     encoded_caption: torch.LongTensor = None
     image: torch.FloatTensor = None
 
 
-class CLEFDataset(Dataset):
+class CaptionLoader(ABC):
+    @abstractmethod
+    def load_captions(self, concat_captions: bool) -> list[Sample]:
+        pass
+
+class FlickrCaptionLoader(CaptionLoader):
+    def __init__(self, annotation_directory: str) -> None:
+        super().__init__()
+        self.annotation_directory = annotation_directory
+
+    def load_captions(self, concat_captions: bool) -> list[Sample]:
+        captions: list[Sample] = []
+
+        meatdata_file = os.path.join(self.annotation_directory, 'captions.txt')
+        with open(meatdata_file, 'r') as f:
+            lines: list[str] = f.readlines()[1:]
+            for line in lines:
+                image_path, caption = line.removesuffix('\n').split(',', maxsplit=1)
+                image_id = image_path.removesuffix('.jpg')
+                captions.append(Sample(
+                    image_id=image_id,
+                    caption=caption,
+                    image_path=image_path
+                ))
+
+        print(f'{len(captions)} captions loaded!')
+        return captions
+
+
+
+class CLEFCaptionLoader(CaptionLoader):
+    def __init__(self, annotation_directory: str) -> None:
+        super().__init__()
+        self.annotation_directory = annotation_directory
+
+    def load_captions(self, concat_captions: bool) -> list[Sample]:
+        captions: list[Sample] = []
+
+        file_pattern = self.annotation_directory + '**/*.eng'
+        for file in glob(file_pattern, recursive=True):
+            try:
+                root = ElementTree.parse(file).getroot()
+                description = root.find('./DESCRIPTION').text
+
+                # multiple captions option by Maria
+                all_captions = [cleansed_caption
+                                for caption in description.split(';')
+                                if (cleansed_caption := caption.strip()) != '']
+                if concat_captions is True:
+                    caption = ' and '.join(all_captions)
+                else:
+                    caption = all_captions[0]
+
+
+                image_path = root.find('./IMAGE').text.removeprefix('images/')
+                image_id = image_path.removesuffix('.jpg')
+
+                captions.append(Sample(
+                    image_id=image_id,
+                    caption=caption,
+                    image_path=image_path
+                ))
+
+            except ParseError:
+                continue
+
+        print(f'{len(captions)} captions loaded!')  # added for clarity by Maria
+        return captions
+
+class ImageDataset(Dataset):
     # by Dominik, individual contributions by Maria marked with in-line comments or comments under specific methods
     def __init__(
         self,
-        annotation_directory: str,
         image_directory: str,
         relation_filter: RelationFilter,
+        caption_loader: CaptionLoader,
         number_images=100,
         word_map: dict = None,
         min_frequency=10,
         concat_captions: bool = False,  # added by Maria to allow the optional concatenation of multiple captions into one
         unk_filter: float = 0.2  # added by Maria for filtering out the captions with more than X% unknown tokens, only works with a pre-loaded wordmap
     ) -> None:
-        super(CLEFDataset, self).__init__()
+        print(f'{caption_loader.__class__.__name__:-^30}')
+        super().__init__()
         self.unknown_words = Counter()
 
-        if word_map is not None:  # this needs to be ahead for the UNK filtering, otherwise the word map is generated later
-            self.word_map = word_map
-        
-        captions = self._load_captions(annotation_directory, number_images, concat_captions, relation_filter, word_map, unk_filter)
-        samples = self._load_images(image_directory, captions)
+         # this needs to be ahead for the UNK filtering, otherwise the word map is generated later
+        vocab = set(word_map.keys()) if word_map is not None else None
+
+        captions = caption_loader.load_captions(concat_captions)
+        filtered_captions = self._filter_captions(captions, number_images, relation_filter, vocab, unk_filter)
+        samples = self._load_images(image_directory, filtered_captions)
 
         if word_map is None:
-            word_map = self._create_word_map(samples, min_frequency)
-        
+            self.word_map = self._create_word_map(samples, min_frequency)
+        else:
+            self.word_map = word_map
+
         self.samples = self._encode_captions(samples)
 
+    def _filter_captions(self,
+                         samples: list[Sample],
+                         number_images: int,
+                         relation_filter: RelationFilter,
+                         vocab: set[str],
+                         unk_filter: float) -> list[Sample]:
+        captions: list[Sample] = []
 
-    def _load_captions(self, directory: str, number_images: int, concat_captions: bool, relation_filter: RelationFilter, word_map: dict, unk_filter: float) -> list[CLEFSample]:
-        captions: list[CLEFSample] = []
-
-        file_pattern = directory + '**/*.eng'
-        for file in glob(file_pattern, recursive=True):
+        for sample in samples:
             if len(captions) == number_images:
                 break
-            try:
-                root = ElementTree.parse(file).getroot()
-                description = root.find('./DESCRIPTION').text
-                # multiple captions option by Maria
-                all_captions = [cleansed_caption
-                                for caption in description.split(';')
-                                if (cleansed_caption := caption.strip()) != '']
-                if concat_captions is True:
-                    first_caption = ' and '.join(all_captions)
-                else:
-                    first_caption = all_captions[0]
 
-                punctuations = string.punctuation + '``\'\''
-                tokenized_caption = [word.lower() 
-                                     for word in nltk.word_tokenize(first_caption)
-                                     if word not in punctuations]
+            punctuations = string.punctuation + '``\'\''
+            tokenized_caption = [word.lower()
+                                 for word in nltk.word_tokenize(sample.caption)
+                                 if word not in punctuations]
 
-                image_path = root.find('./IMAGE').text.removeprefix('images/')
-                image_id = image_path.removesuffix('.jpg')
-
+            if vocab is not None:  # if there is a word map then this will filter out the unks (hopefully)
                 unk_counter = 0
-                if word_map is not None:  # if there is a word map then this will filter out the unks (hopefully)
-                    
-                    for word in tokenized_caption:
-                        encoded_word = self.get_encoded_token(word)
-                        if encoded_word == 1839:
-                            unk_counter += 1
-                        else:
-                            continue
+                for word in tokenized_caption:
+                    if word not in vocab:
+                        unk_counter += 1
 
-                    unk_ratio = unk_counter / len(tokenized_caption)
-                    if relation_filter.has_relation(tokenized_caption):
-                        if unk_ratio < unk_filter:
-                            captions.append(CLEFSample(
-                                image_id=image_id,
-                                caption=tokenized_caption,
-                                # +2 for start and end token
-                                caption_length=torch.CharTensor([len(tokenized_caption) + 2]),
-                                image_path=image_path
-                            ))
-                        else:
-                            continue
-                    else:
-                        continue
-                    
-                else:  # if there is no word map
-                    if relation_filter.has_relation(tokenized_caption):
-                            captions.append(CLEFSample(
-                                image_id=image_id,
-                                caption=tokenized_caption,
-                                # +2 for start and end token
-                                caption_length=torch.CharTensor([len(tokenized_caption) + 2]),
-                                image_path=image_path
-                            ))
-                    else:
-                        continue
+                unk_ratio = unk_counter / len(tokenized_caption)
+                if unk_ratio >= unk_filter:
+                    continue
 
-            except ParseError:
-                continue
+            if relation_filter.has_relation(tokenized_caption):
+                sample.tokenized_caption = tokenized_caption
+                # +2 for start and end token
+                sample.caption_length = torch.CharTensor([len(tokenized_caption) + 2])
+                captions.append(sample)
 
-        print('Captions loaded!')  # added for clarity by Maria
-
+        print(f'{len(captions)} captions filtered.')
         return captions
 
-    def _load_images(self, directory: str, captions: list[CLEFSample]) -> list[CLEFSample]:
+    def _load_images(self, directory: str, captions: list[Sample]) -> list[Sample]:
         transform = transforms.ToTensor()
 
-        samples: list[CLEFSample] = []
+        samples: list[Sample] = []
         for sample in tqdm(captions, desc='Loading images...'):  # tqdm added because Maria is impatient
             image_path = os.path.join(directory, sample.image_path)
 
@@ -145,14 +184,14 @@ class CLEFDataset(Dataset):
             except FileNotFoundError:
                 continue
 
-        print('Images loaded!')  # added for clarity by Maria
+        print(f'{len(samples)} images loaded!\n')  # added for clarity by Maria
 
         return samples
 
-    def _create_word_map(self, samples: list[CLEFSample], min_frequency: int) -> dict:
+    def _create_word_map(self, samples: list[Sample], min_frequency: int) -> dict:
         word_frequency = Counter()
         for sample in samples:
-            word_frequency.update(sample.caption)
+            word_frequency.update(sample.tokenized_caption)
 
         words = [word for word in word_frequency.keys() if word_frequency[word] >= min_frequency]
 
@@ -164,23 +203,26 @@ class CLEFDataset(Dataset):
 
         return word_map
 
-    def _encode_captions(self, samples: list[CLEFSample]) -> list[CLEFSample]:
-        encoded_samples: list[CLEFSample] = []
+    def _encode_captions(self, samples: list[Sample]) -> list[Sample]:
+        encoded_samples: list[Sample] = []
         for sample in samples:
-            encoding = [self.get_encoded_token(START_TOKEN), *[self.get_encoded_token(token)
-                                                               for token in sample.caption], self.get_encoded_token(END_TOKEN)]
+            encoding = [self.get_encoded_token(START_TOKEN),
+                        *[self.get_encoded_token(token) for token in sample.tokenized_caption],
+                        self.get_encoded_token(END_TOKEN)]
             sample.encoded_caption = torch.LongTensor(encoding)  # changing to LongTensor to match the model (Maria)
             encoded_samples.append(sample)
         return encoded_samples
 
     def get_encoded_token(self, token: str) -> int:
         if token in self.word_map:
-            return self.word_map[token]
+            index = self.word_map[token]
         else:
             self.unknown_words.update([token])
-            return self.word_map[UNKNOWN_TOKEN]
+            index = self.word_map[UNKNOWN_TOKEN]
 
-    def __getitem__(self, index: int) -> CLEFSample:
+        return index
+
+    def __getitem__(self, index: int) -> Sample:
         return self.samples[index]
 
     def __len__(self) -> int:
