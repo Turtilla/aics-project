@@ -13,7 +13,8 @@ training_parameters = {
     'epochs': 120,  # number of epochs to train for (if early stopping is not triggered)
     'batch_size': 32,
     'batch_size_val': 5,
-    'workers': 1,  # for data-loading; right now, only 1 works with h5py
+    # workers need to be 0, otherwise 'OS Error: Too many open files' during training
+    'workers': 0,  # for data-loading; right now, only 1 works with h5py
     'encoder_lr': 1e-4,  # learning rate for encoder if fine-tuning
     'decoder_lr': 4e-4,  # learning rate for decoder
     'grad_clip': 5.,  # clip gradients at an absolute value of

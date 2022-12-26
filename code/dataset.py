@@ -187,17 +187,12 @@ class ImageDataset(Dataset):
             # TODO correct conversion?
             # error-handling added by Maria
             try:
-                img = Image.open(image_path)
-                # workaround for bug in pillow that keeps images open in background
-                # see https://stackoverflow.com/questions/29234413/too-many-open-files-error-when-opening-and-loading-images-in-pillow
-                image = img.copy()
-                image = image.resize((256, 256)).convert('RGB')
-                sample.image = transform(image)
-                samples.append(sample)
+                with Image.open(image_path) as img:
+                    image = img.resize((256, 256)).convert('RGB')
+                    sample.image = transform(image)
+                    samples.append(sample)
             except FileNotFoundError:
                 continue
-            finally:
-                img.close()
 
         print(f'{len(samples)} images loaded!\n')  # added for clarity by Maria
 
