@@ -23,7 +23,7 @@ END_TOKEN = '<end>'
 PADDING_TOKEN = '<pad>'
 
 class Datasets(Enum):
-    CLEF = 'clef'
+    CLEF = 'imageCLEF'
     FLICKR = 'flickr'
 
     def __str__(self):

@@ -3,8 +3,7 @@ data/*
 !data/README.md
 
 # Saved
-saved/*
-!saved/README.md
+saved/checkpoint*
 
 # Python
 code/__pycache__/

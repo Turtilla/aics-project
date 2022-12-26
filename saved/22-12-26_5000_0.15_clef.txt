@@ -1,0 +1,277 @@
+$ python main.py --number_of_images 5000 --unknown_filter 0.15 --on_server true
+Start: 2022-12-26 18:53:41
+------CLEFCaptionLoader-------
+17588 captions loaded!
+5000 captions filtered.
+Loading images...: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 5000/5000 [00:31<00:00, 157.54it/s]
+5000 images loaded!
+
+-------Dataset lengths--------
+train: 4000, val: 500, test: 500
+Epoch: [6][0/125]       Batch Time 0.726 (0.726)        Data Load Time 0.034 (0.034)    Loss 4.1947 (4.1947)    Top-5 Accuracy 62.857 (62.857)
+Epoch: [6][100/125]     Batch Time 0.258 (0.258)        Data Load Time 0.010 (0.009)    Loss 3.2472 (3.5909)    Top-5 Accuracy 73.145 (69.352)
+Validation: [0/100]     Batch Time 0.392 (0.392)        Loss 2.9439 (2.9439)    Top-5 Accuracy 78.261 (78.261)
+
+ * LOSS - 3.118, TOP-5 ACCURACY - 75.989, BLEU-4 - 0.1704452913080364
+
+Epoch: [7][0/125]       Batch Time 0.244 (0.244)        Data Load Time 0.007 (0.007)    Loss 2.9193 (2.9193)    Top-5 Accuracy 80.513 (80.513)
+Epoch: [7][100/125]     Batch Time 0.244 (0.249)        Data Load Time 0.007 (0.007)    Loss 2.7842 (2.9640)    Top-5 Accuracy 82.423 (78.495)
+Validation: [0/100]     Batch Time 0.039 (0.039)        Loss 2.8142 (2.8142)    Top-5 Accuracy 80.000 (80.000)
+
+ * LOSS - 2.953, TOP-5 ACCURACY - 78.596, BLEU-4 - 0.1922589722224617
+
+Epoch: [8][0/125]       Batch Time 0.273 (0.273)        Data Load Time 0.007 (0.007)    Loss 2.9128 (2.9128)    Top-5 Accuracy 78.056 (78.056)
+Epoch: [8][100/125]     Batch Time 0.256 (0.251)        Data Load Time 0.007 (0.007)    Loss 2.5657 (2.7570)    Top-5 Accuracy 85.714 (81.648)
+Validation: [0/100]     Batch Time 0.044 (0.044)        Loss 2.5230 (2.5230)    Top-5 Accuracy 85.714 (85.714)
+
+ * LOSS - 2.881, TOP-5 ACCURACY - 79.652, BLEU-4 - 0.20360034935482962
+
+Epoch: [9][0/125]       Batch Time 0.247 (0.247)        Data Load Time 0.008 (0.008)    Loss 2.6515 (2.6515)    Top-5 Accuracy 82.342 (82.342)
+Epoch: [9][100/125]     Batch Time 0.234 (0.257)        Data Load Time 0.010 (0.010)    Loss 2.4299 (2.6202)    Top-5 Accuracy 86.680 (83.598)
+Validation: [0/100]     Batch Time 0.057 (0.057)        Loss 2.7696 (2.7696)    Top-5 Accuracy 78.295 (78.295)
+
+ * LOSS - 2.832, TOP-5 ACCURACY - 80.303, BLEU-4 - 0.20293225651057564
+
+
+Epochs since last improvement: 1
+
+Epoch: [10][0/125]      Batch Time 0.261 (0.261)        Data Load Time 0.007 (0.007)    Loss 2.7112 (2.7112)    Top-5 Accuracy 82.298 (82.298)
+Epoch: [10][100/125]    Batch Time 0.267 (0.256)        Data Load Time 0.007 (0.007)    Loss 2.3384 (2.4932)    Top-5 Accuracy 87.255 (85.558)
+Validation: [0/100]     Batch Time 0.044 (0.044)        Loss 2.6745 (2.6745)    Top-5 Accuracy 83.019 (83.019)
+
+ * LOSS - 2.804, TOP-5 ACCURACY - 80.607, BLEU-4 - 0.2099878971824355
+
+Epoch: [11][0/125]      Batch Time 0.263 (0.263)        Data Load Time 0.007 (0.007)    Loss 2.4393 (2.4393)    Top-5 Accuracy 83.860 (83.860)
+Epoch: [11][100/125]    Batch Time 0.265 (0.256)        Data Load Time 0.009 (0.007)    Loss 2.2754 (2.3538)    Top-5 Accuracy 88.441 (87.371)
+Validation: [0/100]     Batch Time 0.043 (0.043)        Loss 2.6699 (2.6699)    Top-5 Accuracy 83.333 (83.333)
+
+ * LOSS - 2.787, TOP-5 ACCURACY - 80.888, BLEU-4 - 0.21480605526946484
+
+Epoch: [12][0/125]      Batch Time 0.260 (0.260)        Data Load Time 0.008 (0.008)    Loss 2.2578 (2.2578)    Top-5 Accuracy 87.633 (87.633)
+Epoch: [12][100/125]    Batch Time 0.270 (0.257)        Data Load Time 0.007 (0.008)    Loss 2.2120 (2.2453)    Top-5 Accuracy 89.867 (88.951)
+Validation: [0/100]     Batch Time 0.043 (0.043)        Loss 2.6671 (2.6671)    Top-5 Accuracy 80.682 (80.682)
+
+ * LOSS - 2.781, TOP-5 ACCURACY - 81.247, BLEU-4 - 0.2217838944296523
+
+Epoch: [13][0/125]      Batch Time 0.253 (0.253)        Data Load Time 0.008 (0.008)    Loss 2.2634 (2.2634)    Top-5 Accuracy 88.743 (88.743)
+Epoch: [13][100/125]    Batch Time 0.240 (0.257)        Data Load Time 0.008 (0.008)    Loss 2.2445 (2.1155)    Top-5 Accuracy 90.520 (90.700)
+Validation: [0/100]     Batch Time 0.044 (0.044)        Loss 2.3265 (2.3265)    Top-5 Accuracy 91.209 (91.209)
+
+ * LOSS - 2.777, TOP-5 ACCURACY - 81.337, BLEU-4 - 0.22805489899614917
+
+Epoch: [14][0/125]      Batch Time 0.282 (0.282)        Data Load Time 0.007 (0.007)    Loss 1.9495 (1.9495)    Top-5 Accuracy 93.344 (93.344)
+Epoch: [14][100/125]    Batch Time 0.272 (0.257)        Data Load Time 0.007 (0.008)    Loss 2.0179 (1.9981)    Top-5 Accuracy 90.323 (92.172)
+Validation: [0/100]     Batch Time 0.059 (0.059)        Loss 2.8959 (2.8959)    Top-5 Accuracy 78.333 (78.333)
+
+ * LOSS - 2.797, TOP-5 ACCURACY - 80.978, BLEU-4 - 0.22852491132959668
+
+Epoch: [15][0/125]      Batch Time 0.280 (0.280)        Data Load Time 0.008 (0.008)    Loss 1.8147 (1.8147)    Top-5 Accuracy 93.586 (93.586)
+Epoch: [15][100/125]    Batch Time 0.253 (0.259)        Data Load Time 0.009 (0.008)    Loss 1.8572 (1.8793)    Top-5 Accuracy 93.554 (93.637)
+Validation: [0/100]     Batch Time 0.052 (0.052)        Loss 2.8617 (2.8617)    Top-5 Accuracy 79.545 (79.545)
+
+ * LOSS - 2.804, TOP-5 ACCURACY - 80.978, BLEU-4 - 0.23288582633028465
+
+Epoch: [16][0/125]      Batch Time 0.285 (0.285)        Data Load Time 0.008 (0.008)    Loss 1.6001 (1.6001)    Top-5 Accuracy 96.355 (96.355)
+Epoch: [16][100/125]    Batch Time 0.239 (0.259)        Data Load Time 0.008 (0.007)    Loss 1.8759 (1.7615)    Top-5 Accuracy 94.163 (94.890)
+Validation: [0/100]     Batch Time 0.039 (0.039)        Loss 3.0019 (3.0019)    Top-5 Accuracy 78.378 (78.378)
+
+ * LOSS - 2.839, TOP-5 ACCURACY - 80.303, BLEU-4 - 0.22604308248004293
+
+
+Epochs since last improvement: 1
+
+Epoch: [17][0/125]      Batch Time 0.258 (0.258)        Data Load Time 0.007 (0.007)    Loss 1.7260 (1.7260)    Top-5 Accuracy 96.330 (96.330)
+Epoch: [17][100/125]    Batch Time 0.286 (0.257)        Data Load Time 0.007 (0.007)    Loss 1.6830 (1.6443)    Top-5 Accuracy 94.868 (96.106)
+Validation: [0/100]     Batch Time 0.048 (0.048)        Loss 2.5814 (2.5814)    Top-5 Accuracy 83.673 (83.673)
+
+ * LOSS - 2.868, TOP-5 ACCURACY - 80.461, BLEU-4 - 0.2375021087064984
+
+Epoch: [18][0/125]      Batch Time 0.264 (0.264)        Data Load Time 0.007 (0.007)    Loss 1.4914 (1.4914)    Top-5 Accuracy 96.707 (96.707)
+Epoch: [18][100/125]    Batch Time 0.262 (0.257)        Data Load Time 0.008 (0.007)    Loss 1.6531 (1.5429)    Top-5 Accuracy 95.095 (96.954)
+Validation: [0/100]     Batch Time 0.038 (0.038)        Loss 2.6328 (2.6328)    Top-5 Accuracy 83.544 (83.544)
+
+ * LOSS - 2.903, TOP-5 ACCURACY - 79.685, BLEU-4 - 0.23373655248246344
+
+
+Epochs since last improvement: 1
+
+Epoch: [19][0/125]      Batch Time 0.267 (0.267)        Data Load Time 0.008 (0.008)    Loss 1.4311 (1.4311)    Top-5 Accuracy 97.703 (97.703)
+Epoch: [19][100/125]    Batch Time 0.257 (0.258)        Data Load Time 0.007 (0.007)    Loss 1.4323 (1.4461)    Top-5 Accuracy 98.206 (97.797)
+Validation: [0/100]     Batch Time 0.041 (0.041)        Loss 2.6336 (2.6336)    Top-5 Accuracy 82.143 (82.143)
+
+ * LOSS - 2.951, TOP-5 ACCURACY - 79.674, BLEU-4 - 0.22888964736094944
+
+
+Epochs since last improvement: 2
+
+Epoch: [20][0/125]      Batch Time 0.249 (0.249)        Data Load Time 0.007 (0.007)    Loss 1.3458 (1.3458)    Top-5 Accuracy 98.308 (98.308)
+Epoch: [20][100/125]    Batch Time 0.238 (0.258)        Data Load Time 0.007 (0.007)    Loss 1.3589 (1.3429)    Top-5 Accuracy 98.790 (98.446)
+Validation: [0/100]     Batch Time 0.041 (0.041)        Loss 2.8200 (2.8200)    Top-5 Accuracy 82.857 (82.857)
+
+ * LOSS - 3.010, TOP-5 ACCURACY - 79.011, BLEU-4 - 0.217833774891494
+
+
+Epochs since last improvement: 3
+
+Epoch: [21][0/125]      Batch Time 0.261 (0.261)        Data Load Time 0.007 (0.007)    Loss 1.2626 (1.2626)    Top-5 Accuracy 99.110 (99.110)
+Epoch: [21][100/125]    Batch Time 0.247 (0.257)        Data Load Time 0.007 (0.007)    Loss 1.3092 (1.2673)    Top-5 Accuracy 98.058 (98.937)
+Validation: [0/100]     Batch Time 0.040 (0.040)        Loss 2.6792 (2.6792)    Top-5 Accuracy 84.524 (84.524)
+
+ * LOSS - 3.046, TOP-5 ACCURACY - 78.371, BLEU-4 - 0.22954183158161126
+
+
+Epochs since last improvement: 4
+
+Epoch: [22][0/125]      Batch Time 0.270 (0.270)        Data Load Time 0.007 (0.007)    Loss 1.1835 (1.1835)    Top-5 Accuracy 99.477 (99.477)
+Epoch: [22][100/125]    Batch Time 0.296 (0.257)        Data Load Time 0.007 (0.007)    Loss 1.1712 (1.1983)    Top-5 Accuracy 99.425 (99.286)
+Validation: [0/100]     Batch Time 0.048 (0.048)        Loss 3.1580 (3.1580)    Top-5 Accuracy 77.660 (77.660)
+
+ * LOSS - 3.094, TOP-5 ACCURACY - 78.303, BLEU-4 - 0.23058712285764427
+
+
+Epochs since last improvement: 5
+
+Epoch: [23][0/125]      Batch Time 0.266 (0.266)        Data Load Time 0.006 (0.006)    Loss 1.0926 (1.0926)    Top-5 Accuracy 99.674 (99.674)
+Epoch: [23][100/125]    Batch Time 0.269 (0.259)        Data Load Time 0.010 (0.007)    Loss 1.0947 (1.1323)    Top-5 Accuracy 99.518 (99.520)
+Validation: [0/100]     Batch Time 0.047 (0.047)        Loss 3.1562 (3.1562)    Top-5 Accuracy 74.194 (74.194)
+
+ * LOSS - 3.155, TOP-5 ACCURACY - 77.854, BLEU-4 - 0.21704744447710475
+
+
+Epochs since last improvement: 6
+
+Epoch: [24][0/125]      Batch Time 0.252 (0.252)        Data Load Time 0.009 (0.009)    Loss 1.1523 (1.1523)    Top-5 Accuracy 99.582 (99.582)
+Epoch: [24][100/125]    Batch Time 0.279 (0.262)        Data Load Time 0.009 (0.009)    Loss 1.0914 (1.0829)    Top-5 Accuracy 100.000 (99.687)
+Validation: [0/100]     Batch Time 0.054 (0.054)        Loss 3.8162 (3.8162)    Top-5 Accuracy 72.340 (72.340)
+
+ * LOSS - 3.190, TOP-5 ACCURACY - 77.955, BLEU-4 - 0.22448359445111987
+
+
+Epochs since last improvement: 7
+
+Epoch: [25][0/125]      Batch Time 0.263 (0.263)        Data Load Time 0.008 (0.008)    Loss 1.0806 (1.0806)    Top-5 Accuracy 99.814 (99.814)
+Epoch: [25][100/125]    Batch Time 0.256 (0.259)        Data Load Time 0.007 (0.008)    Loss 1.0511 (1.0353)    Top-5 Accuracy 99.640 (99.797)
+Validation: [0/100]     Batch Time 0.049 (0.049)        Loss 3.3476 (3.3476)    Top-5 Accuracy 77.193 (77.193)
+
+ * LOSS - 3.260, TOP-5 ACCURACY - 77.618, BLEU-4 - 0.21879138819246405
+
+
+Epochs since last improvement: 8
+
+
+DECAYING learning rate.
+The new learning rate is 0.000320
+
+Epoch: [26][0/125]      Batch Time 0.254 (0.254)        Data Load Time 0.008 (0.008)    Loss 1.0102 (1.0102)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [26][100/125]    Batch Time 0.288 (0.261)        Data Load Time 0.008 (0.008)    Loss 0.9792 (0.9905)    Top-5 Accuracy 100.000 (99.873)
+Validation: [0/100]     Batch Time 0.043 (0.043)        Loss 2.9425 (2.9425)    Top-5 Accuracy 82.609 (82.609)
+
+ * LOSS - 3.286, TOP-5 ACCURACY - 77.528, BLEU-4 - 0.22163377924058403
+
+
+Epochs since last improvement: 9
+
+Epoch: [27][0/125]      Batch Time 0.254 (0.254)        Data Load Time 0.008 (0.008)    Loss 0.9590 (0.9590)    Top-5 Accuracy 99.813 (99.813)
+Epoch: [27][100/125]    Batch Time 0.263 (0.261)        Data Load Time 0.009 (0.009)    Loss 0.9501 (0.9568)    Top-5 Accuracy 99.833 (99.907)
+Validation: [0/100]     Batch Time 0.057 (0.057)        Loss 3.7555 (3.7555)    Top-5 Accuracy 68.142 (68.142)
+
+ * LOSS - 3.349, TOP-5 ACCURACY - 76.674, BLEU-4 - 0.2235271076671936
+
+
+Epochs since last improvement: 10
+
+Epoch: [28][0/125]      Batch Time 0.252 (0.252)        Data Load Time 0.008 (0.008)    Loss 0.9396 (0.9396)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [28][100/125]    Batch Time 0.284 (0.259)        Data Load Time 0.010 (0.008)    Loss 0.9368 (0.9365)    Top-5 Accuracy 100.000 (99.928)
+Validation: [0/100]     Batch Time 0.051 (0.051)        Loss 3.3759 (3.3759)    Top-5 Accuracy 77.273 (77.273)
+
+ * LOSS - 3.394, TOP-5 ACCURACY - 76.944, BLEU-4 - 0.2174107847918079
+
+
+Epochs since last improvement: 11
+
+Epoch: [29][0/125]      Batch Time 0.268 (0.268)        Data Load Time 0.008 (0.008)    Loss 0.8992 (0.8992)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [29][100/125]    Batch Time 0.262 (0.262)        Data Load Time 0.008 (0.008)    Loss 0.9055 (0.9213)    Top-5 Accuracy 100.000 (99.942)
+Validation: [0/100]     Batch Time 0.045 (0.045)        Loss 2.5729 (2.5729)    Top-5 Accuracy 83.951 (83.951)
+
+ * LOSS - 3.433, TOP-5 ACCURACY - 76.607, BLEU-4 - 0.21622283310579052
+
+
+Epochs since last improvement: 12
+
+Epoch: [30][0/125]      Batch Time 0.270 (0.270)        Data Load Time 0.009 (0.009)    Loss 0.8997 (0.8997)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [30][100/125]    Batch Time 0.260 (0.259)        Data Load Time 0.009 (0.008)    Loss 0.9060 (0.9098)    Top-5 Accuracy 100.000 (99.962)
+Validation: [0/100]     Batch Time 0.044 (0.044)        Loss 2.5982 (2.5982)    Top-5 Accuracy 85.542 (85.542)
+
+ * LOSS - 3.478, TOP-5 ACCURACY - 76.607, BLEU-4 - 0.21796530081585327
+
+
+Epochs since last improvement: 13
+
+Epoch: [31][0/125]      Batch Time 0.248 (0.248)        Data Load Time 0.008 (0.008)    Loss 0.9194 (0.9194)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [31][100/125]    Batch Time 0.258 (0.259)        Data Load Time 0.008 (0.008)    Loss 0.9181 (0.8993)    Top-5 Accuracy 100.000 (99.966)
+Validation: [0/100]     Batch Time 0.059 (0.059)        Loss 4.0513 (4.0513)    Top-5 Accuracy 67.619 (67.619)
+
+ * LOSS - 3.510, TOP-5 ACCURACY - 76.348, BLEU-4 - 0.2139881728583462
+
+
+Epochs since last improvement: 14
+
+Epoch: [32][0/125]      Batch Time 0.261 (0.261)        Data Load Time 0.007 (0.007)    Loss 0.8823 (0.8823)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [32][100/125]    Batch Time 0.275 (0.259)        Data Load Time 0.009 (0.008)    Loss 0.9080 (0.8927)    Top-5 Accuracy 99.832 (99.978)
+Validation: [0/100]     Batch Time 0.053 (0.053)        Loss 3.2372 (3.2372)    Top-5 Accuracy 83.505 (83.505)
+
+ * LOSS - 3.549, TOP-5 ACCURACY - 76.292, BLEU-4 - 0.21632566446053636
+
+
+Epochs since last improvement: 15
+
+Epoch: [33][0/125]      Batch Time 0.261 (0.261)        Data Load Time 0.008 (0.008)    Loss 0.8935 (0.8935)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [33][100/125]    Batch Time 0.269 (0.260)        Data Load Time 0.008 (0.009)    Loss 0.8693 (0.8887)    Top-5 Accuracy 100.000 (99.976)
+Validation: [0/100]     Batch Time 0.045 (0.045)        Loss 3.4883 (3.4883)    Top-5 Accuracy 75.824 (75.824)
+
+ * LOSS - 3.581, TOP-5 ACCURACY - 76.382, BLEU-4 - 0.21125957783768998
+
+
+Epochs since last improvement: 16
+
+
+DECAYING learning rate.
+The new learning rate is 0.000256
+
+Epoch: [34][0/125]      Batch Time 0.277 (0.277)        Data Load Time 0.008 (0.008)    Loss 0.8921 (0.8921)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [34][100/125]    Batch Time 0.276 (0.260)        Data Load Time 0.008 (0.008)    Loss 0.8734 (0.8812)    Top-5 Accuracy 100.000 (99.993)
+Validation: [0/100]     Batch Time 0.048 (0.048)        Loss 4.5392 (4.5392)    Top-5 Accuracy 67.568 (67.568)
+
+ * LOSS - 3.595, TOP-5 ACCURACY - 76.157, BLEU-4 - 0.21437579944225882
+
+
+Epochs since last improvement: 17
+
+Epoch: [35][0/125]      Batch Time 0.264 (0.264)        Data Load Time 0.010 (0.010)    Loss 0.8855 (0.8855)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [35][100/125]    Batch Time 0.279 (0.269)        Data Load Time 0.012 (0.009)    Loss 0.8755 (0.8751)    Top-5 Accuracy 100.000 (99.993)
+Validation: [0/100]     Batch Time 0.045 (0.045)        Loss 3.7631 (3.7631)    Top-5 Accuracy 78.889 (78.889)
+
+ * LOSS - 3.628, TOP-5 ACCURACY - 75.753, BLEU-4 - 0.2122873376488112
+
+
+Epochs since last improvement: 18
+
+Epoch: [36][0/125]      Batch Time 0.269 (0.269)        Data Load Time 0.009 (0.009)    Loss 0.8727 (0.8727)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [36][100/125]    Batch Time 0.252 (0.262)        Data Load Time 0.009 (0.009)    Loss 0.8699 (0.8690)    Top-5 Accuracy 100.000 (99.995)
+Validation: [0/100]     Batch Time 0.051 (0.051)        Loss 4.1144 (4.1144)    Top-5 Accuracy 75.248 (75.248)
+
+ * LOSS - 3.662, TOP-5 ACCURACY - 76.090, BLEU-4 - 0.21108484437839753
+
+
+Epochs since last improvement: 19
+
+Epoch: [37][0/125]      Batch Time 0.258 (0.258)        Data Load Time 0.011 (0.011)    Loss 0.8923 (0.8923)    Top-5 Accuracy 100.000 (100.000)
+Epoch: [37][100/125]    Batch Time 0.263 (0.260)        Data Load Time 0.009 (0.009)    Loss 0.8512 (0.8651)    Top-5 Accuracy 100.000 (99.995)
+Validation: [0/100]     Batch Time 0.049 (0.049)        Loss 4.2432 (4.2432)    Top-5 Accuracy 68.421 (68.421)
+
+ * LOSS - 3.699, TOP-5 ACCURACY - 75.978, BLEU-4 - 0.21515557112922443
+
+
+Epochs since last improvement: 20
+
+End: 2022-12-26 19:14:31
