@@ -222,7 +222,7 @@ class CaptionTrainer:
         return bleu4
 
 
-def train(filename: str, train_set, val_set, word_map: dict, saved_root_dir: str, model_path: str, device):
+def train(checkpoint_name: str, train_set, val_set, word_map: dict, saved_root_dir: str, model_path: str, device):
     """
     Training and validation.
     """
@@ -300,7 +300,7 @@ def train(filename: str, train_set, val_set, word_map: dict, saved_root_dir: str
                  'decoder': decoder,
                  'encoder_optimizer': encoder_optimizer,
                  'decoder_optimizer': decoder_optimizer}
-        filename = f'checkpoint_{filename}.pth.tar'
+        filename = f'checkpoint_{checkpoint_name}.pth.tar'
         torch.save(state, filename)
         # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
         if is_best:
