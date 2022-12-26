@@ -2,9 +2,25 @@ import time
 
 import torch.optim
 import torch.utils.data
+from dataset import custom_collate
 from nltk.translate.bleu_score import corpus_bleu
-from preproc import AverageMeter, accuracy, clip_gradient
+from preproc import AverageMeter, accuracy, adjust_learning_rate, clip_gradient
+from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence
+
+# Training parameters
+training_parameters = {
+    'epochs': 120,  # number of epochs to train for (if early stopping is not triggered)
+    'batch_size': 32,
+    'batch_size_val': 5,
+    'workers': 1,  # for data-loading; right now, only 1 works with h5py
+    'encoder_lr': 1e-4,  # learning rate for encoder if fine-tuning
+    'decoder_lr': 4e-4,  # learning rate for decoder
+    'grad_clip': 5.,  # clip gradients at an absolute value of
+    'alpha_c': 1.,  # regularization parameter for 'doubly stochastic attention', as in the paper
+    'print_freq': 100,  # print training/validation stats every __ batches
+    'fine_tune_encoder': False,  # fine-tune encoder?
+}
 
 
 class CaptionTrainer:
@@ -203,3 +219,88 @@ class CaptionTrainer:
             print(f'\n * LOSS - {losses.avg:.3f}, TOP-5 ACCURACY - {top5accs.avg:.3f}, BLEU-4 - {bleu4}\n')
 
         return bleu4
+
+
+def train(filename: str, train_set, val_set, word_map: dict, saved_root_dir: str, model_path: str, device):
+    """
+    Training and validation.
+    """
+    checkpoint = torch.load(model_path, map_location=torch.device(device))
+    start_epoch = checkpoint['epoch'] + 1
+    epochs_since_improvement = checkpoint['epochs_since_improvement']
+    best_bleu4 = checkpoint['bleu-4']
+    decoder = checkpoint['decoder']
+    decoder_optimizer = checkpoint['decoder_optimizer']
+    encoder = checkpoint['encoder']
+    encoder_optimizer = checkpoint['encoder_optimizer']
+    if training_parameters['fine_tune_encoder'] is True and encoder_optimizer is None:
+        encoder.fine_tune(training_parameters['fine_tune_encoder'])
+        encoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, encoder.parameters()),
+                                             lr=training_parameters['encoder_lr'])
+
+    trainer = CaptionTrainer(decoder, encoder, word_map, device, training_parameters)
+
+    # Loss function
+    criterion = nn.CrossEntropyLoss().to(device)
+
+    # Custom dataloaders
+    train_loader = torch.utils.data.DataLoader(
+        train_set,
+        shuffle=True,
+        collate_fn=custom_collate,
+        drop_last=True,
+        batch_size=training_parameters['batch_size'],
+        num_workers=training_parameters['workers'],
+        pin_memory=True)
+    val_loader = torch.utils.data.DataLoader(
+        val_set,
+        shuffle=True,
+        collate_fn=custom_collate,
+        drop_last=True,
+        batch_size=training_parameters['batch_size_val'],
+        num_workers=training_parameters['workers'],
+        pin_memory=True)
+
+    # Epochs
+    for epoch in range(start_epoch, training_parameters['epochs']):
+        # Decay learning rate if there is no improvement for 8 consecutive epochs, and terminate training after 20
+        if epochs_since_improvement == 20:
+            break
+        if epochs_since_improvement > 0 and epochs_since_improvement % 8 == 0:
+            adjust_learning_rate(decoder_optimizer, 0.8)
+            if training_parameters['fine_tune_encoder']:
+                adjust_learning_rate(encoder_optimizer, 0.8)
+
+        # One epoch's training
+        trainer.train(train_loader=train_loader,
+                      criterion=criterion,
+                      encoder_optimizer=encoder_optimizer,
+                      decoder_optimizer=decoder_optimizer,
+                      epoch=epoch)
+
+        # One epoch's validation
+        recent_bleu4 = trainer.validate(val_loader=val_loader,
+                                        criterion=criterion)
+
+        # Check if there was an improvement
+        is_best = recent_bleu4 > best_bleu4
+        best_bleu4 = max(recent_bleu4, best_bleu4)
+        if not is_best:
+            epochs_since_improvement += 1
+            print(f'\nEpochs since last improvement: {epochs_since_improvement}\n')
+        else:
+            epochs_since_improvement = 0
+
+        # Save checkpoint - needed since the original function did not allow for a path
+        state = {'epoch': epoch,
+                 'epochs_since_improvement': epochs_since_improvement,
+                 'bleu-4': recent_bleu4,
+                 'encoder': encoder,
+                 'decoder': decoder,
+                 'encoder_optimizer': encoder_optimizer,
+                 'decoder_optimizer': decoder_optimizer}
+        filename = f'checkpoint_{filename}.pth.tar'
+        torch.save(state, filename)
+        # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
+        if is_best:
+            torch.save(state, saved_root_dir + 'BEST_' + filename)

@@ -187,12 +187,17 @@ class ImageDataset(Dataset):
             # TODO correct conversion?
             # error-handling added by Maria
             try:
-                with Image.open(image_path) as img:
-                    image = img.resize((256, 256)).convert('RGB')
-                    sample.image = transform(image)
-                    samples.append(sample)
+                img = Image.open(image_path)
+                # workaround for bug in pillow that keeps images open in background
+                # see https://stackoverflow.com/questions/29234413/too-many-open-files-error-when-opening-and-loading-images-in-pillow
+                image = img.copy()
+                image = image.resize((256, 256)).convert('RGB')
+                sample.image = transform(image)
+                samples.append(sample)
             except FileNotFoundError:
                 continue
+            finally:
+                img.close()
 
         print(f'{len(samples)} images loaded!\n')  # added for clarity by Maria
 
@@ -257,7 +262,7 @@ def custom_collate(samples: list[Sample]) -> dict:
         caption_lengths.append(sample.caption_length)
         encoded_captions.append(sample.encoded_caption)
         images.append(sample.image)
-    
+
     return {
         'image_ids': image_ids,
         'captions': captions,
