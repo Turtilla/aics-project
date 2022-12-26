@@ -91,7 +91,7 @@ if __name__ == '__main__':
     dataset = load_data(arguments.dataset, data_root_dir, word_map, arguments.number_of_images, arguments.unknown_filter)
     train_set, val_set, test_set = split_dataset(dataset)
 
-    train(filename=f'{arguments.dataset}_{arguments.number_of_images}_{arguments.unknown_filter}',
+    train(checkpoint_name=f'{arguments.dataset}_{arguments.number_of_images}_{arguments.unknown_filter}',
           train_set=train_set,
           val_set=val_set,
           word_map=word_map,
