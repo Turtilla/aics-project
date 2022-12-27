@@ -1,3 +1,6 @@
+# This is Nikolai Ilinykh's original code. The only change we made was adding this comment. We downloaded the .py file because while we could probably access
+# it when running our code on the server, we would not be able to do that locally.
+
 import argparse
 import json
 import os
