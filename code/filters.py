@@ -6,13 +6,26 @@ import nltk
 
 
 class RelationFilter(ABC):
+    '''???
+    '''
     @abstractmethod
     def has_relation(self, tokenized_caption: list[str]) -> bool:
         pass
 
 class POSRelationFilter(RelationFilter):
+    '''By Maria.
+    A class that allows for the selection of the captions that include relations as expressed linguistically by verbs or adpositions.
+    '''
+    # This was changed from just a function to a class by Dominik.
     def has_relation(self, tokenized_caption: list[str]) -> bool:
-        # selecting only the captions that include verbs or prepositions (relation words) by Maria
+        '''A class method that counts the number of verbs and adpositions in a tokenized caption to determine if the caption contains relations using NLTK.
+
+        Args:
+            tokenized_caption (list[str]): A caption tokenized down to words, represented as a list of strings.
+
+        Returns:
+            A Boolean value which either confirms that the caption contains relations (True) or does not contain relations (False).
+        '''
         annotated_caption = nltk.pos_tag(tokenized_caption, tagset='universal')
 
         va_counter = 0  # for seeing if there is a verb or an adposition in the description
@@ -24,10 +37,16 @@ class POSRelationFilter(RelationFilter):
         
         return va_counter > 0
 
-
-# relations and rules from https://github.com/GU-CLASP/spatial_relations_vectors_sltc2018
 class RuleBasedRelationFilter(RelationFilter):
+    '''By others (adapted bt Dominik from https://github.com/GU-CLASP/spatial_relations_vectors_sltc2018).
+    A class that allows for the selection of the captions that include relations as defined by specific rules outlined below. 
+
+    Attributes:
+        composit2simple (dict): A dictionary containing all the different relations built on the basis of the predefined rules.
+    '''
     def __init__(self) -> None:
+        '''The __init__ method of the class. Initializes the predefined rules for detecting relations.
+        '''
         super().__init__()
 
         # Landau English prepositions
@@ -112,6 +131,14 @@ class RuleBasedRelationFilter(RelationFilter):
         self.composit2simple.update({w: w        for w in self.composit2simple.values()})
 
     def has_relation(self, tokenized_caption: list[str]) -> bool:
+        '''A class method that counts the number of verbs and adpositions in a tokenized caption to determine if the caption contains relations using the predefined rules.
+
+        Args:
+            tokenized_caption (list[str]): A caption tokenized down to words, represented as a list of strings.
+
+        Returns:
+            A Boolean value which either confirms that the caption contains relations (True) or does not contain relations (False).
+        '''
         for relation in self.composit2simple:
             tokenized_relation = nltk.word_tokenize(relation)
             if any(tokenized_caption[idx: idx + len(tokenized_relation)] == tokenized_relation for idx in range(len(tokenized_caption) - len(tokenized_relation) + 1)):
