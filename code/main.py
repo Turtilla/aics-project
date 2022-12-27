@@ -14,13 +14,35 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 cudnn.benchmark = True  # set to true only if inputs to model are fixed size; otherwise lot of computational overhead
 
 
-def load_wordmap(word_map_path):
+def load_wordmap(word_map_path: str):
+    '''From Nikolai Ilinykh's code.
+    A function that allows for the loading in of a saved wordmap.
+
+    Args:
+        word_map_path (str): The path to the file containing the wordmap.
+
+    Returns:
+        A dictionary containing the mappings between words and indices.
+    '''
     # Load word map (word2ix)
     with open(word_map_path, 'r') as j:
         word_map = json.load(j)
     return word_map
 
 def load_data(dataset: str, data_root_dir: str, word_map: dict, number_of_images: int, unknown_filter: float):
+    '''By Dominik.
+    A function that allows for the loading in of the data from a specific dataset to be later used in the fine-tuning.
+    
+    Args:
+        dataset (str): The name of the dataset that is to be loaded. Either clef or flickr.
+        data_root_dir (str): The root directory in which both of the datasets are located.
+        word_map (dict): A pre-loaded word to index mapping. Can be left empty, then a new one will be generated.
+        number_of_images (int): The number of the captions that will be loaded after filtering. Does not fully correspond to the end number of samples due to image loading errors.
+        unknown_filter (float): The maximum of unknown tokens relative to the length of the caption (e.g. 20% = 0.2).
+
+    Return:
+        An ImageDataset object with the data loaded in according to the given parameters.        
+    '''
     if dataset == Datasets.CLEF:
         clef_root_dir = os.path.join(data_root_dir, 'iaprtc12/')
         clef_image_dir = os.path.join(clef_root_dir, 'images/')
@@ -49,11 +71,19 @@ def load_data(dataset: str, data_root_dir: str, word_map: dict, number_of_images
         raise ValueError('dataset must be one of the following: clef, flickr')
 
 def split_dataset(dataset):
-    # splitting the dataset by Maria
-    # remove the last optional argument for random splits, this way the seed is fixed so results are reproducible
-    # QUESTION: does this need to be done any prettier?
+    '''By Maria.
+    A function that allows for the splitting of an ImageDataset object into subsets that can be used for training, validation, testing. Splitting is done according
+    to preset proportions (8:1:1). Splitting is done using randomization, but with a fixed seed for reproducible results (elements of the dataset are shuffled,
+    but the result of the shuffling is always the same). Also prints out the approximate sizes of the subsets.
 
-    # TODO relative values not working
+    Args:
+        dataset (Dataset): The Dataset object that is to be split. Technically does not have to be ImageDataset.
+
+    Returns:
+        Three subsets in the order of train, val, test, in the proportions of 8:1:1.
+    '''
+
+    # The printing out of the approximate lengths by Dominik.
     len_train = int(0.8 * len(dataset))
     len_val = int(0.1 * len(dataset))
     len_test = len(dataset) - len_train - len_val
@@ -64,6 +94,7 @@ def split_dataset(dataset):
 
 
 if __name__ == '__main__':
+    # This script is intended to be run from the command line as that makes the fine-tuning simpler.
     parser = argparse.ArgumentParser()
     parser.add_argument('--on_server', type=bool, default=False)
     parser.add_argument('--dataset', type=Datasets, default=Datasets.CLEF)
@@ -78,19 +109,20 @@ if __name__ == '__main__':
     if arguments.on_server:
         data_root_dir = '/srv/data/guskunkdo/'
         saved_root_dir = os.path.join(data_root_dir, 'saved/')
-        model_path = '/srv/data/aics/03-image-captioning/data/BEST_checkpoint_flickr8k_5_10.pth.tar'  # model path updated
-        word_map_path = '/srv/data/aics/03-image-captioning/data/out/wordmap_flickr8k_5_10.json'  # wordmap path updated
+        model_path = '/srv/data/aics/03-image-captioning/data/BEST_checkpoint_flickr8k_5_10.pth.tar'  
+        word_map_path = '/srv/data/aics/03-image-captioning/data/out/wordmap_flickr8k_5_10.json'  
     else:
         data_root_dir = '../data/'
         saved_root_dir = '../saved/'
-        model_path = '../data/BEST_checkpoint_flickr8k_5_10.pth.tar'  # model path updated
-        word_map_path = '../data/wordmap_flickr8k_5_10.json'  # wordmap path updated
+        model_path = '../data/BEST_checkpoint_flickr8k_5_10.pth.tar'  
+        word_map_path = '../data/wordmap_flickr8k_5_10.json'  
 
     # Read word map
     word_map = load_wordmap(word_map_path)
     dataset = load_data(arguments.dataset, data_root_dir, word_map, arguments.number_of_images, arguments.unknown_filter)
     train_set, val_set, test_set = split_dataset(dataset)
 
+    # the training loop is imported from elsewhere (Nikolai Ilinykh's code)
     train(checkpoint_name=f'{arguments.dataset}_{arguments.number_of_images}_{arguments.unknown_filter}',
           train_set=train_set,
           val_set=val_set,
