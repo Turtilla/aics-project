@@ -1,3 +1,6 @@
+# This code was mostly taken from Nikolai Ilinykh's code, but adapted at times to suit our needs or to eliminate errors. Changes are marked in the code,
+# the original documentation is preserved.
+
 import json
 
 import matplotlib.cm as cm
@@ -10,10 +13,30 @@ from matplotlib.pyplot import figure
 from PIL import Image
 from torchvision.transforms import transforms
 
-
-### THE FOLLOWING CODE IS TAKEN FROM TEST.IPYNB BY NIKOLAI ILINYKH
 class CaptionTester:
+    '''The original code is by Nikolai Ilinykh, adapted into a class by Dominik.
+    This class allows for the testing of a trained model by having it generate captions using beam search and visualize the attention during the generation.
+
+    Attributes:
+        device (str): The device on which the calculations are to be conducted.
+        start_token (str): The start token used in the captions.
+        end_token (str): The end token used in the captions.
+        unknown_token (str): The unknown token used in the captions.
+        decoder (nn.Module): The decoder module.
+        encoder (nn.Module): The encoder module.
+        rev_word_map (dict): The index to word mapping for decoding the generated captions; the reverse of the word map.
+    '''
     def __init__(self, model_path, word_map_path, device, start_token, end_token, unknown_token) -> None:
+        '''The __init__ method of the class.
+
+        Args:
+            model_path (str): The path to the saved model.
+            word_map_path (str): The path to the saved wordmap.
+            device (str): The device on which the calculations are to be conducted.
+            start_token (str): The start token used in the captions.
+            end_token (str): The end token used in the captions.
+            unknown_token (str): The unknown token used in the captions.
+        '''
         self.device = device
         self.start_token = start_token
         self.end_token = end_token
@@ -71,7 +94,7 @@ class CaptionTester:
         encoder_out = encoder_out.expand(k, num_pixels, encoder_dim)  # (k, num_pixels, encoder_dim)
 
         # Tensor to store top k previous words at each step; now they're just 
-        k_prev_words = torch.LongTensor([[self.word_map[self.start_token]]] * k).to(self.device)  # (k, 1)
+        k_prev_words = torch.LongTensor([[self.word_map[self.start_token]]] * k).to(self.device)  # (k, 1); the start token is added here by Maria as it was missing from the original code
 
         # Tensor to store top k sequences; now they're just 
         seqs = k_prev_words  # (k, 1)
@@ -110,9 +133,8 @@ class CaptionTester:
 
             # Add
             scores = top_k_scores.expand_as(scores) + scores  # (s, vocab_size)
-            
-            
-            # exclude unknown token
+             
+            # the exclusion of the unknown token so that the generated captions are not long strings of <unk> by Dominik
             unknown_token_index = self.word_map[self.unknown_token]
             scores[:, unknown_token_index] = float('-inf')
             
@@ -127,9 +149,6 @@ class CaptionTester:
             prev_word_inds = top_k_words / vocab_size  # (s)
             next_word_inds = top_k_words % vocab_size  # (s)
 
-            
-            
-            
             # Add new words to sequences, alphas
 
             prev_word_inds = prev_word_inds.cpu()
@@ -137,13 +156,12 @@ class CaptionTester:
 
             seqs = torch.cat([seqs[prev_word_inds], next_word_inds.unsqueeze(1)], dim=1)  # (s, step+1)
             
-            
             seqs_alpha = torch.cat([seqs_alpha[prev_word_inds], alpha[prev_word_inds].unsqueeze(1)],
                                 dim=1)  # (s, step+1, enc_image_size, enc_image_size)
 
             # Which sequences are incomplete (didn't reach )?
             incomplete_inds = [ind for ind, next_word in enumerate(next_word_inds) if
-                            next_word != self.word_map[self.end_token]]
+                            next_word != self.word_map[self.end_token]]  # the end token is added here by Maria as it was missing from the original code
             complete_inds = list(set(range(len(next_word_inds))) - set(incomplete_inds))
 
             # Set aside complete sequences
@@ -165,7 +183,7 @@ class CaptionTester:
             k_prev_words = next_word_inds[incomplete_inds].unsqueeze(1)
 
             # Break if things have been going on too long
-            if step > 50:
+            if step > 50:  # Number of steps increased to increase the number of captions that do not fail to generate.
                 break
             step += 1
 
