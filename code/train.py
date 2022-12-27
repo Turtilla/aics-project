@@ -1,3 +1,6 @@
+# This code was mostly taken from Nikolai Ilinykh's code, but adapted at times to suit our needs or to eliminate errors. Changes are marked in the code,
+# the original documentation is preserved.
+
 import time
 
 import torch.optim
@@ -23,8 +26,17 @@ training_parameters = {
     'fine_tune_encoder': False,  # fine-tune encoder?
 }
 
-
 class CaptionTrainer:
+    '''Most of the code by Nikolai Ilinykh, adapted into a class by Dominik.  TODO: make sure that is correct!!!
+    This class allows for defining how a model should be trained and then providing methods for carrying that training out.
+
+    Attributes:
+        encoder (nn.Module): The encoder model.
+        decoder (nn.Module): The decoder model.
+        word_map (dict): The word to index mapping.
+        device (str): The kind of device the calculations are to be performed on.
+        training_parameters (dict): The (hyper)parameters used for training.
+    '''
     def __init__(self, decoder, encoder, word_map, device, training_parameters) -> None:
         self.encoder = encoder.to(device)
         self.encoder.train() # train mode (dropout and batchnorm is used)
@@ -36,7 +48,7 @@ class CaptionTrainer:
         self.device = device
         self.training_parameters = training_parameters
 
-    # this is all from Nikolai
+    # everything below is from Nikolai Ilinykh's code.
     def train(self, train_loader, criterion, encoder_optimizer, decoder_optimizer, epoch):
         """
         Performs one epoch's training.
@@ -221,7 +233,6 @@ class CaptionTrainer:
 
         return bleu4
 
-
 def train(checkpoint_name: str, train_set, val_set, word_map: dict, saved_root_dir: str, model_path: str, device):
     """
     Training and validation.
@@ -292,7 +303,8 @@ def train(checkpoint_name: str, train_set, val_set, word_map: dict, saved_root_d
         else:
             epochs_since_improvement = 0
 
-        # Save checkpoint - needed since the original function did not allow for a path
+        # Save checkpoint
+        # This needed to be moved here in this fashion by Maria due to the original way of saving the model not allowing for a directory to be included.
         state = {'epoch': epoch,
                  'epochs_since_improvement': epochs_since_improvement,
                  'bleu-4': recent_bleu4,
