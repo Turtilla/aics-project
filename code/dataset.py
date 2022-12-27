@@ -17,12 +17,15 @@ from torch.utils.data import Dataset
 from torchvision.transforms import transforms
 from tqdm import tqdm
 
+# variables for unifying the non-word tokens
 UNKNOWN_TOKEN = '<unk>'
 START_TOKEN = '<start>'
 END_TOKEN = '<end>'
 PADDING_TOKEN = '<pad>'
 
 class Datasets(Enum):
+    '''???
+    '''
     CLEF = 'imageCLEF'
     FLICKR = 'flickr'
 
@@ -31,6 +34,18 @@ class Datasets(Enum):
 
 @dataclass(slots=True, kw_only=True)
 class Sample:
+    '''By Dominik.
+    A class which allows for the creation of picture-caption sample objects. 
+
+    Attributes:
+        image_id (str): The ID of the image (file name without the .jpg extension).
+        caption (str): The caption associated with the sample.
+        image_path (str): The ID/file name of the image in the sample.
+        tokenized_caption (list[str]): A tokenized version of the caption associated with the sample.
+        caption_length (torch.CharTensor): The length of the encoded caption.
+        encoded_caption (torch.LongTensor): The caption encoded using some wordmap.
+        image (torch.FloatTensor): A tensor representation of the image associated with the sample.
+    '''
     # by Dominik
     image_id: str
     caption: str
@@ -42,16 +57,36 @@ class Sample:
 
 
 class CaptionLoader(ABC):
+    '''???
+    '''
     @abstractmethod
     def load_captions(self, concat_captions: bool) -> list[Sample]:
         pass
 
 class FlickrCaptionLoader(CaptionLoader):
+    '''By Dominik.
+    A class that allows for loading in the captions and names of associated images from the Flickr dataset.
+
+    Attributes:
+        annotation_directory (str): The directory in which the file containing the annotations is stored.
+    '''
     def __init__(self, annotation_directory: str) -> None:
+        '''The __init__ method of the class.
+        
+        Args:
+            annotation_directory (str): The directory in which the file containing the annotations is stored.'''
         super().__init__()
         self.annotation_directory = annotation_directory
 
     def load_captions(self, concat_captions: bool) -> list[Sample]:
+        '''A method that allows for loading in captions.
+
+        Args:
+            concat_captions (bool): Defines whether or not captions should be concatenated, in case they consist of more than one distinct phrase. Redundant in this class.
+
+        Returns:
+            A list of partially filled-out Sample objects.
+        '''
         captions: list[Sample] = []
 
         meatdata_file = os.path.join(self.annotation_directory, 'captions.txt')
@@ -72,11 +107,29 @@ class FlickrCaptionLoader(CaptionLoader):
 
 
 class CLEFCaptionLoader(CaptionLoader):
+    '''By Dominik.
+    A class that allows for loading in the captions and names of associated images from the Flickr dataset.
+
+    Attributes:
+        annotation_directory (str): The directory in which the file containing the annotations is stored.
+    '''
     def __init__(self, annotation_directory: str) -> None:
+        '''The __init__ method of the class.
+        
+        Args:
+            annotation_directory (str): The directory in which the file containing the annotations is stored.'''
         super().__init__()
         self.annotation_directory = annotation_directory
 
     def load_captions(self, concat_captions: bool) -> list[Sample]:
+        '''A method that allows for loading in captions.
+
+        Args:
+            concat_captions (bool): Defines whether or not captions should be concatenated, in case they consist of more than one distinct phrase. 
+            
+        Returns:
+            A list of partially filled-out Sample objects.
+        '''
         captions: list[Sample] = []
 
         file_pattern = self.annotation_directory + '**/*.eng'
@@ -111,23 +164,42 @@ class CLEFCaptionLoader(CaptionLoader):
         return captions
 
 class ImageDataset(Dataset):
-    # by Dominik, individual contributions by Maria marked with in-line comments or comments under specific methods
+    '''By Dominik.
+    A custom torch Dataset-based dataset class intended for storing and performing operations on Sample objects representing the information from a given
+    dataset (imageCLEF or Flickr8k).
+
+    Attributes:
+        unknown_words (Counter): An object storing the unknown words encountered during the dataset generation.
+        word_map (dict): A dictionary containing the mappings between words and indices used for encoding the captions. Can be pre-loaded or created from scratch.
+        samples (list[Sample]): A list of fully filled-out Sample objects representing captions and corresponding images transformed or encoded in various ways.
+    '''
     def __init__(
         self,
         image_directory: str,
         relation_filter: RelationFilter,
         caption_loader: CaptionLoader,
-        number_images=100,
+        number_images: int = 100,
         word_map: dict = None,
-        min_frequency=10,
+        min_frequency: int = 10,
         concat_captions: bool = False,  # added by Maria to allow the optional concatenation of multiple captions into one
         unk_filter: float = 0.2  # added by Maria for filtering out the captions with more than X% unknown tokens, only works with a pre-loaded wordmap
     ) -> None:
+        '''The __init__ method of the class.
+
+        Args:
+            image_directory (str): The directory in which the corresponding image files are located.
+            relation_filter (RelationFilter): The class that will be used for selecting the captions containing relations between entities.
+            caption_loader (CaptionLoader): The class that will be used to load the captions.
+            number_images (int): The number of captions that are to be selected (will not necessarily correspond to the number of the full samples, but will be close).
+            word_map (dict): A preexisting wordmap. Can be left empty (None), in which case a new wordmap will be generated.
+            concat_captions (bool): Determines whether multi-element captions will be concatenated or only the first element will be used. Only relevant in imageCLEF.
+            unk_filter (float): Determines the maximum % of unknown tokens in a caption (e.g. 0.2 = 20% in this case).
+        '''
         print(f'{caption_loader.__class__.__name__:-^30}')
         super().__init__()
         self.unknown_words = Counter()
 
-         # this needs to be ahead for the UNK filtering, otherwise the word map is generated later
+        # This part (unk filtering) was initially implemented by Maria, with some re-working by Dominik.
         vocab = set(word_map.keys()) if word_map is not None else None
 
         captions = caption_loader.load_captions(concat_captions)
@@ -147,6 +219,19 @@ class ImageDataset(Dataset):
                          relation_filter: RelationFilter,
                          vocab: set[str],
                          unk_filter: float) -> list[Sample]:
+        '''A method that allows for the filtering of captions to only retain ones that possess specific, desirable features (e.g. contain relations or do
+        not contain too many unknown tokens).
+
+        Args:
+            samples (list[Sample]): A list of partially filled-out samples (include only captions, image paths, IDs).
+            number_images(int): The upper limit on how many captions get retained (does not 100% correspond to the number of images due to image loading errors).
+            relation_filter (RelationFilter): The class that will be used for selecting the captions containing relations between entities.
+            vocab (set): A set of all the words in the pre-loaded wordmap.
+            unk_filter (float): Determines the maximum % of unknown tokens in a caption (e.g. 0.2 = 20% in this case).
+
+        Returns:
+            A list of captions filtered using the given filters.
+        '''
         captions: list[Sample] = []
 
         for sample in samples:
@@ -178,13 +263,21 @@ class ImageDataset(Dataset):
         return captions
 
     def _load_images(self, directory: str, captions: list[Sample]) -> list[Sample]:
+        '''A method of the class which allows for the loading in of the images associated with the captions.
+
+        Args:
+            directory (str): The directory in which the image files are located.
+            captions (list[Sample]): A list of partially filled-out Sample objects (not containing the actual images yet).
+
+        Returns:
+            A list of samples now containing the loaded images.
+        '''
         transform = transforms.ToTensor()
 
         samples: list[Sample] = []
         for sample in tqdm(captions, desc='Loading images...'):  # tqdm added because Maria is impatient
             image_path = os.path.join(directory, sample.image_path)
 
-            # TODO correct conversion?
             # error-handling added by Maria
             try:
                 with Image.open(image_path) as img:
@@ -199,6 +292,15 @@ class ImageDataset(Dataset):
         return samples
 
     def _create_word_map(self, samples: list[Sample], min_frequency: int) -> dict:
+        '''A class method which creates a new word map for the captions in the dataset.
+
+        Args:
+            samples (list[Sample]): A list of partially filled-out Sample objects. Contains the tokenized captions that are the basis for creating the map.
+            min_frequency (int): The minimum frequency a word has to have to be included in the vocabulary / wordmap.
+
+        Returns:
+            A dict that is a representation of the given vocabulary and its mappings to indices.
+        '''
         word_frequency = Counter()
         for sample in samples:
             word_frequency.update(sample.tokenized_caption)
@@ -214,6 +316,14 @@ class ImageDataset(Dataset):
         return word_map
 
     def _encode_captions(self, samples: list[Sample]) -> list[Sample]:
+        '''A class method that allows for the encoding of the tokenized captions using a certain word to index mapping (wordmap).
+
+        Args:
+            samples (list[Sample]): A list of partially filled-out Sample objects.
+
+        Returns:
+            A list of Sample objects now containing the encoded versions of captions.
+        '''
         encoded_samples: list[Sample] = []
         for sample in samples:
             encoding = [self.get_encoded_token(START_TOKEN),
@@ -224,6 +334,14 @@ class ImageDataset(Dataset):
         return encoded_samples
 
     def get_encoded_token(self, token: str) -> int:
+        '''A class method that allows for the retrieval of the index that a given word token is associated with in the Dataset's wordmap.
+        
+        Args:
+            token (str): The token whose index is being searched for.
+            
+        Returns:
+            An integer representing the index of the token in Dataset's wordmap.
+        '''
         if token in self.word_map:
             index = self.word_map[token]
         else:
@@ -233,14 +351,36 @@ class ImageDataset(Dataset):
         return index
 
     def __getitem__(self, index: int) -> Sample:
+        '''The __getitem__ magic method of the class.
+        
+        Args:
+            index (int): The index that is being asked for.
+            
+        Returns:
+            The Sample object from the internal samples attribute that is located under the given index.
+        '''
         return self.samples[index]
 
     def __len__(self) -> int:
+        '''The __len__ magic method of the class.
+
+        Returns:
+            The length of the list of samples stored in the class object.
+        '''
         return len(self.samples)
 
 
 def custom_collate(samples: list[Sample]) -> dict:
-    # by Dominik
+    '''By Dominik.
+    A custom Collate function that will be used in the creation of Dataloaders out of the custom Datasets.
+
+    Args:
+        samples (list[Sample]): A list of Sample objects containing information about captions and corresponding images, encoded or transformed in various ways.
+
+    Returns:
+        A dictionary representation of the given list, where the values of a given attribute of the Sample objects are gathered in a list which is then stored as
+        one of the dictionary's values. This essentially allows for the batching of the data.
+    '''
     image_ids = []
     captions = []
     image_paths = []
