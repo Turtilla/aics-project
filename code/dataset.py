@@ -24,7 +24,8 @@ END_TOKEN = '<end>'
 PADDING_TOKEN = '<pad>'
 
 class Datasets(Enum):
-    '''???
+    '''By Dominik
+    An enum that lists all possible datasets and can be used instead of magic strings.
     '''
     CLEF = 'imageCLEF'
     FLICKR = 'flickr'
@@ -35,7 +36,7 @@ class Datasets(Enum):
 @dataclass(slots=True, kw_only=True)
 class Sample:
     '''By Dominik.
-    A class which allows for the creation of picture-caption sample objects. 
+    A class which allows for the creation of picture-caption sample objects.
 
     Attributes:
         image_id (str): The ID of the image (file name without the .jpg extension).
@@ -57,11 +58,19 @@ class Sample:
 
 
 class CaptionLoader(ABC):
-    '''???
+    '''By Dominik
+    An abstract CaptionLoader. All of its implementations need to implement the load_captions method
     '''
     @abstractmethod
     def load_captions(self, concat_captions: bool) -> list[Sample]:
-        pass
+        '''An abstract method that allows for loading in captions.
+
+        Args:
+            concat_captions (bool): Defines whether or not captions should be concatenated, in case they consist of more than one distinct phrase.
+
+        Returns:
+            A list of partially filled-out Sample objects.
+        '''
 
 class FlickrCaptionLoader(CaptionLoader):
     '''By Dominik.
@@ -108,7 +117,7 @@ class FlickrCaptionLoader(CaptionLoader):
 
 class CLEFCaptionLoader(CaptionLoader):
     '''By Dominik.
-    A class that allows for loading in the captions and names of associated images from the Flickr dataset.
+    A class that allows for loading in the captions and names of associated images from the imageCLEF dataset.
 
     Attributes:
         annotation_directory (str): The directory in which the file containing the annotations is stored.
@@ -125,7 +134,7 @@ class CLEFCaptionLoader(CaptionLoader):
         '''A method that allows for loading in captions.
 
         Args:
-            concat_captions (bool): Defines whether or not captions should be concatenated, in case they consist of more than one distinct phrase. 
+            concat_captions (bool): Defines whether or not captions should be concatenated, in case they consist of more than one distinct phrase.
             
         Returns:
             A list of partially filled-out Sample objects.
@@ -242,8 +251,10 @@ class ImageDataset(Dataset):
             tokenized_caption = [word.lower()
                                  for word in nltk.word_tokenize(sample.caption)
                                  if word not in punctuations]
-
-            if vocab is not None:  # if there is a word map then this will filter out the unks (hopefully)
+            
+            # By Maria
+            # if there is a word map then this will filter out the unks (hopefully)
+            if vocab is not None:
                 unk_counter = 0
                 for word in tokenized_caption:
                     if word not in vocab:
@@ -293,6 +304,7 @@ class ImageDataset(Dataset):
 
     def _create_word_map(self, samples: list[Sample], min_frequency: int) -> dict:
         '''A class method which creates a new word map for the captions in the dataset.
+        This method is based on https://github.com/sdobnik/aics/blob/master/tutorials/03-image-captioning/2022/preproc.py
 
         Args:
             samples (list[Sample]): A list of partially filled-out Sample objects. Contains the tokenized captions that are the basis for creating the map.
@@ -379,7 +391,8 @@ def custom_collate(samples: list[Sample]) -> dict:
 
     Returns:
         A dictionary representation of the given list, where the values of a given attribute of the Sample objects are gathered in a list which is then stored as
-        one of the dictionary's values. This essentially allows for the batching of the data.
+        one of the dictionary's values. This essentially allows for the batching of the data. 
+        The encoded captions are padded to the longest sequence in the batch.
     '''
     image_ids = []
     captions = []

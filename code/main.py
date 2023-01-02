@@ -8,6 +8,7 @@ from dataset import (CLEFCaptionLoader, Datasets, FlickrCaptionLoader,
                      ImageDataset)
 from filters import POSRelationFilter, RuleBasedRelationFilter
 from torch.backends import cudnn
+from torch.utils.data import Dataset
 from train import train
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -29,7 +30,7 @@ def load_wordmap(word_map_path: str):
         word_map = json.load(j)
     return word_map
 
-def load_data(dataset: str, data_root_dir: str, word_map: dict, number_of_images: int, unknown_filter: float):
+def load_data(dataset: Datasets, data_root_dir: str, word_map: dict, number_of_images: int, unknown_filter: float):
     '''By Dominik.
     A function that allows for the loading in of the data from a specific dataset to be later used in the fine-tuning.
     
@@ -70,7 +71,7 @@ def load_data(dataset: str, data_root_dir: str, word_map: dict, number_of_images
     else:
         raise ValueError('dataset must be one of the following: clef, flickr')
 
-def split_dataset(dataset):
+def split_dataset(dataset: Dataset):
     '''By Maria.
     A function that allows for the splitting of an ImageDataset object into subsets that can be used for training, validation, testing. Splitting is done according
     to preset proportions (8:1:1). Splitting is done using randomization, but with a fixed seed for reproducible results (elements of the dataset are shuffled,
