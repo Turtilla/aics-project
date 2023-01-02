@@ -1,0 +1,182 @@
+python main.py --number_of_images 500 --unknown_filter 0.1 --on_server tru
+e
+/home/gusszawma@GU.GU.SE/aics/aics_venv/lib64/python3.10/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: libtorch_cuda_cu.so: cannot open shared object file: No such file or directory
+  warn(f"Failed to load image Python extension: {e}")
+Start: 2023-01-02 14:02:29
+------CLEFCaptionLoader-------
+17588 captions loaded!
+500 captions filtered.
+Loading images...: 100%|█████████████████████████████████████████████████████████████| 500/500 [00:03<00:00, 164.09it/s]
+500 images loaded!
+
+-------Dataset lengths--------
+train: 400, val: 50, test: 50
+Epoch: [6][0/12]        Batch Time 0.718 (0.718)        Data Load Time 0.043 (0.043)    Loss 4.6928 (4.6928)    Top-5 Accuracy 53.578 (53.578)
+Validation: [0/10]      Batch Time 0.377 (0.377)        Loss 4.7222 (4.7222)    Top-5 Accuracy 56.000 (56.000)
+
+ * LOSS - 4.610, TOP-5 ACCURACY - 54.524, BLEU-4 - 0.05421142438863879
+
+
+Epochs since last improvement: 1
+
+Epoch: [7][0/12]        Batch Time 0.231 (0.231)        Data Load Time 0.007 (0.007)    Loss 4.5252 (4.5252)    Top-5 Accuracy 55.556 (55.556)
+Validation: [0/10]      Batch Time 0.034 (0.034)        Loss 4.4038 (4.4038)    Top-5 Accuracy 53.731 (53.731)
+
+ * LOSS - 4.085, TOP-5 ACCURACY - 61.037, BLEU-4 - 0.08072371102552671
+
+
+Epochs since last improvement: 2
+
+Epoch: [8][0/12]        Batch Time 0.226 (0.226)        Data Load Time 0.006 (0.006)    Loss 4.0998 (4.0998)    Top-5 Accuracy 58.704 (58.704)
+Validation: [0/10]      Batch Time 0.038 (0.038)        Loss 3.4885 (3.4885)    Top-5 Accuracy 68.605 (68.605)
+
+ * LOSS - 3.907, TOP-5 ACCURACY - 63.088, BLEU-4 - 0.08480675145502053
+
+
+Epochs since last improvement: 3
+
+Epoch: [9][0/12]        Batch Time 0.236 (0.236)        Data Load Time 0.005 (0.005)    Loss 3.5698 (3.5698)    Top-5 Accuracy 67.463 (67.463)
+Validation: [0/10]      Batch Time 0.039 (0.039)        Loss 4.0926 (4.0926)    Top-5 Accuracy 66.250 (66.250)
+
+ * LOSS - 3.813, TOP-5 ACCURACY - 63.571, BLEU-4 - 0.104544769415259
+
+
+Epochs since last improvement: 4
+
+Epoch: [10][0/12]       Batch Time 0.247 (0.247)        Data Load Time 0.005 (0.005)    Loss 3.4214 (3.4214)    Top-5 Accuracy 68.966 (68.966)
+Validation: [0/10]      Batch Time 0.042 (0.042)        Loss 4.2072 (4.2072)    Top-5 Accuracy 54.321 (54.321)
+
+ * LOSS - 3.738, TOP-5 ACCURACY - 64.777, BLEU-4 - 0.10237348492060888
+
+
+Epochs since last improvement: 5
+
+Epoch: [11][0/12]       Batch Time 0.206 (0.206)        Data Load Time 0.005 (0.005)    Loss 3.2428 (3.2428)    Top-5 Accuracy 72.149 (72.149)
+Validation: [0/10]      Batch Time 0.034 (0.034)        Loss 4.0514 (4.0514)    Top-5 Accuracy 61.250 (61.250)
+
+ * LOSS - 3.686, TOP-5 ACCURACY - 66.104, BLEU-4 - 0.10946644141404924
+
+
+Epochs since last improvement: 6
+
+Epoch: [12][0/12]       Batch Time 0.217 (0.217)        Data Load Time 0.005 (0.005)    Loss 3.1249 (3.1249)    Top-5 Accuracy 74.642 (74.642)
+Validation: [0/10]      Batch Time 0.054 (0.054)        Loss 3.6673 (3.6673)    Top-5 Accuracy 70.093 (70.093)
+
+ * LOSS - 3.667, TOP-5 ACCURACY - 66.586, BLEU-4 - 0.10130017414832182
+
+
+Epochs since last improvement: 7
+
+Epoch: [13][0/12]       Batch Time 0.233 (0.233)        Data Load Time 0.005 (0.005)    Loss 3.1722 (3.1722)    Top-5 Accuracy 74.081 (74.081)
+Validation: [0/10]      Batch Time 0.037 (0.037)        Loss 3.6134 (3.6134)    Top-5 Accuracy 65.278 (65.278)
+
+ * LOSS - 3.628, TOP-5 ACCURACY - 67.189, BLEU-4 - 0.10384926270176872
+
+
+Epochs since last improvement: 8
+
+
+DECAYING learning rate.
+The new learning rate is 0.000320
+
+Epoch: [14][0/12]       Batch Time 0.219 (0.219)        Data Load Time 0.006 (0.006)    Loss 3.0897 (3.0897)    Top-5 Accuracy 74.948 (74.948)
+Validation: [0/10]      Batch Time 0.033 (0.033)        Loss 4.3233 (4.3233)    Top-5 Accuracy 57.143 (57.143)
+
+ * LOSS - 3.608, TOP-5 ACCURACY - 67.310, BLEU-4 - 0.11900277513819796
+
+
+Epochs since last improvement: 9
+
+Epoch: [15][0/12]       Batch Time 0.238 (0.238)        Data Load Time 0.006 (0.006)    Loss 2.9430 (2.9430)    Top-5 Accuracy 75.492 (75.492)
+Validation: [0/10]      Batch Time 0.037 (0.037)        Loss 3.6570 (3.6570)    Top-5 Accuracy 69.444 (69.444)
+
+ * LOSS - 3.617, TOP-5 ACCURACY - 67.672, BLEU-4 - 0.10699335269342092
+
+
+Epochs since last improvement: 10
+
+Epoch: [16][0/12]       Batch Time 0.230 (0.230)        Data Load Time 0.005 (0.005)    Loss 2.9810 (2.9810)    Top-5 Accuracy 78.682 (78.682)
+Validation: [0/10]      Batch Time 0.039 (0.039)        Loss 3.7705 (3.7705)    Top-5 Accuracy 60.241 (60.241)
+
+ * LOSS - 3.607, TOP-5 ACCURACY - 68.034, BLEU-4 - 0.11624936130923065
+
+
+Epochs since last improvement: 11
+
+Epoch: [17][0/12]       Batch Time 0.229 (0.229)        Data Load Time 0.005 (0.005)    Loss 2.8421 (2.8421)    Top-5 Accuracy 77.670 (77.670)
+Validation: [0/10]      Batch Time 0.033 (0.033)        Loss 3.4178 (3.4178)    Top-5 Accuracy 70.588 (70.588)
+
+ * LOSS - 3.588, TOP-5 ACCURACY - 68.758, BLEU-4 - 0.130736584495314
+
+
+Epochs since last improvement: 12
+
+Epoch: [18][0/12]       Batch Time 0.220 (0.220)        Data Load Time 0.005 (0.005)    Loss 2.7403 (2.7403)    Top-5 Accuracy 79.175 (79.175)
+Validation: [0/10]      Batch Time 0.037 (0.037)        Loss 3.9440 (3.9440)    Top-5 Accuracy 59.184 (59.184)
+
+ * LOSS - 3.591, TOP-5 ACCURACY - 68.516, BLEU-4 - 0.12187942324517816
+
+
+Epochs since last improvement: 13
+
+Epoch: [19][0/12]       Batch Time 0.227 (0.227)        Data Load Time 0.007 (0.007)    Loss 2.7257 (2.7257)    Top-5 Accuracy 79.633 (79.633)
+Validation: [0/10]      Batch Time 0.042 (0.042)        Loss 3.9851 (3.9851)    Top-5 Accuracy 63.158 (63.158)
+
+ * LOSS - 3.589, TOP-5 ACCURACY - 68.275, BLEU-4 - 0.12540048700735446
+
+
+Epochs since last improvement: 14
+
+Epoch: [20][0/12]       Batch Time 0.236 (0.236)        Data Load Time 0.007 (0.007)    Loss 2.6913 (2.6913)    Top-5 Accuracy 82.909 (82.909)
+Validation: [0/10]      Batch Time 0.037 (0.037)        Loss 3.8959 (3.8959)    Top-5 Accuracy 58.333 (58.333)
+
+ * LOSS - 3.578, TOP-5 ACCURACY - 68.396, BLEU-4 - 0.14231588941925982
+
+
+Epochs since last improvement: 15
+
+Epoch: [21][0/12]       Batch Time 0.226 (0.226)        Data Load Time 0.007 (0.007)    Loss 2.5119 (2.5119)    Top-5 Accuracy 86.420 (86.420)
+Validation: [0/10]      Batch Time 0.055 (0.055)        Loss 3.6922 (3.6922)    Top-5 Accuracy 66.667 (66.667)
+
+ * LOSS - 3.583, TOP-5 ACCURACY - 68.637, BLEU-4 - 0.1280731518018655
+
+
+Epochs since last improvement: 16
+
+
+DECAYING learning rate.
+The new learning rate is 0.000256
+
+Epoch: [22][0/12]       Batch Time 0.207 (0.207)        Data Load Time 0.007 (0.007)    Loss 2.4358 (2.4358)    Top-5 Accuracy 84.615 (84.615)
+Validation: [0/10]      Batch Time 0.038 (0.038)        Loss 3.1771 (3.1771)    Top-5 Accuracy 74.286 (74.286)
+
+ * LOSS - 3.578, TOP-5 ACCURACY - 68.878, BLEU-4 - 0.14547420135976566
+
+
+Epochs since last improvement: 17
+
+Epoch: [23][0/12]       Batch Time 0.210 (0.210)        Data Load Time 0.007 (0.007)    Loss 2.4223 (2.4223)    Top-5 Accuracy 85.586 (85.586)
+Validation: [0/10]      Batch Time 0.039 (0.039)        Loss 3.3021 (3.3021)    Top-5 Accuracy 72.917 (72.917)
+
+ * LOSS - 3.584, TOP-5 ACCURACY - 68.516, BLEU-4 - 0.13841300064853101
+
+
+Epochs since last improvement: 18
+
+Epoch: [24][0/12]       Batch Time 0.227 (0.227)        Data Load Time 0.007 (0.007)    Loss 2.4038 (2.4038)    Top-5 Accuracy 86.923 (86.923)
+Validation: [0/10]      Batch Time 0.040 (0.040)        Loss 3.3010 (3.3010)    Top-5 Accuracy 73.077 (73.077)
+
+ * LOSS - 3.574, TOP-5 ACCURACY - 69.843, BLEU-4 - 0.13050988678029693
+
+
+Epochs since last improvement: 19
+
+Epoch: [25][0/12]       Batch Time 0.227 (0.227)        Data Load Time 0.007 (0.007)    Loss 2.2144 (2.2144)    Top-5 Accuracy 89.272 (89.272)
+Validation: [0/10]      Batch Time 0.037 (0.037)        Loss 3.6557 (3.6557)    Top-5 Accuracy 71.277 (71.277)
+
+ * LOSS - 3.587, TOP-5 ACCURACY - 67.913, BLEU-4 - 0.1462316790114253
+
+
+Epochs since last improvement: 20
+
+End: 2023-01-02 14:03:53
