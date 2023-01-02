@@ -68,7 +68,7 @@ class CaptionTrainer:
         start = time.time()
 
         # Batches
-        for i, content in enumerate(train_loader):  # changing to fit our dataloader, TODO same in validation
+        for i, content in enumerate(train_loader):  # changing to fit our dataloader
             images = torch.stack(content['images'])
             caps = content['encoded_captions']
             caplens = torch.stack(content['caption_lengths'])
@@ -205,10 +205,10 @@ class CaptionTrainer:
                 # Store references (true captions), and hypothesis (prediction) for each image
                 # If for n images, we have n hypotheses, and references a, b, c... for each image, we need -
                 # references = [[ref1a, ref1b, ref1c], [ref2a, ref2b], ...], hypotheses = [hyp1, hyp2, ...]
-                # In the CLEF dataset, we only have one caption per image hence the variables looks like this:
+                # In the CLEF dataset, we only have one caption per image hence the variables look like this:
                 # references = [[ref1], [ref2], ...], hypotheses = [hyp1, hyp2, ...]
 
-                # References            
+                # References           
                 references.extend([
                     [[token for token in caption.tolist() if token not in {self.word_map['<start>'], self.word_map['<pad>']}]]
                     for caption in captions[sort_ind]

@@ -6,11 +6,19 @@ import nltk
 
 
 class RelationFilter(ABC):
-    '''???
+    '''By Dominik
+    An abstract RelationFilter. All of its implementations need to implement the has_relation method  
     '''
     @abstractmethod
     def has_relation(self, tokenized_caption: list[str]) -> bool:
-        pass
+        '''A class method that returns if a caption contains a relation.
+
+        Args:
+            tokenized_caption (list[str]): A caption tokenized down to words, represented as a list of strings.
+
+        Returns:
+            A Boolean value which either confirms that the caption contains relations (True) or does not contain relations (False).
+        '''
 
 class POSRelationFilter(RelationFilter):
     '''By Maria.
@@ -39,7 +47,7 @@ class POSRelationFilter(RelationFilter):
 
 class RuleBasedRelationFilter(RelationFilter):
     '''By others (adapted bt Dominik from https://github.com/GU-CLASP/spatial_relations_vectors_sltc2018).
-    A class that allows for the selection of the captions that include relations as defined by specific rules outlined below. 
+    A class that allows for the selection of the captions that include relations as defined by specific rules outlined below.
 
     Attributes:
         composit2simple (dict): A dictionary containing all the different relations built on the basis of the predefined rules.
