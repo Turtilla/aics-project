@@ -22,16 +22,33 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Here goes the abstract for the paper.
+
+Within this project we aim to explore how finetuning a CNN and LSTM-based image captioning model on a new dataset influences its performance on both the old and new data, along with what role some of the parameters, such as finetuning data size or the prevalence of out-of-vocabulary tokens in captions play in the process. We discover that differences in vocabulary play a major role and that providing too much fine-tuning data can cause the whole system to fail. We conclude that domain adaptation can be difficult to carry out, but perhaps worth attempting in certain cases.\footnote{MS} 
+
 \end{abstract}
 
 \section{Introduction}
 
-Here we will have the introduction: some general talk, a little summary of the background reading (do we need more reading?), our questions that we want answered.
+\textit{Here we will have the introduction: some general talk, a little summary of the background reading (do we need more reading?), our questions that we want answered.}
+
+Automated image caption generation is an intersectional topic, combining advances in the fields of computer vision and natural language processing. It is not only an interesting and challenging task, but also one with useful real-life implementations, such as assisting people with vision impairments in a variety of ways. It is therefore quite relevant to explore a variety of issues that can be encountered in the field, in order to improve the performance of potential models and increase their relevance in practical applications.\footnote{MS}
+
+One potential issue with image captioning systems is that of domain adaptation, meaning adapting a trained system to somewhat different data. While it is not uncommon to encounter e.g. pre-trained image processing components in image caption generation models, it would appear that the general consensus is to train a new captioning model for every new dataset. This, however, may lead to an unnecessary waste of resources, especially if large amounts of data are used for training; another potential issue is there not always being enough data to train a model from scratch. An alternative in that case would be domain adaptation.\footnote{MS}
+
+Some more lightweight, but well-performing image captioning architectures include ones with a CNN-based image processing component and LSTM-based language generation component; their performance can be further increased by incorporating some form of attention, which allows for a more precise identification of what is relevant to the caption generation at what point. The particular model used in this project is based on \cite{xu2015attend}, with the implementation by \cite{ilinykh}. In the model, the encoder is a convolutional network, from which representations of elements of the picture - feature vectors - are obtained. The decoder is an LSTM network with attention, determining what parts of the image are the most relevant for generating a given element of the caption (ADD WHICH KIND OF ATTENTION?).\footnote{MS} 
+
+Another way of employing attention in a similar model is presented in \cite{lu16}, where a special "visual sentinel" helps determine when to attend to the data from the image and when to the information from the language model, as not all the words are equally represented in an image - for instance, articles or other determiners, particles, etc., stem more from the requirements of a given grammatical structure or content word rather than the scene that is being described. However, since this project did not delve into the contribution of each of these elements in caption generation, it was found to be superfluous in our particular case, even though it can lead to improved performance.\footnote{MS}
+
+
 
 \section{Materials and Methods}
 
 Here we need to describe the databases that we used and the code that we used, and what we added on our own. Then we need to describe how we went about evaluation.
+
+\subsection{The image captioning model}
+\subsection{Flickr8k}
+\subsection{imageCLEF}
+\subsection{Human judgement questionnaire}
 
 \section{Results}
 
