@@ -44,7 +44,7 @@ The topic of domain adaptation in caption generation itself does not appear to b
 
 While all of the aforementioned papers seem to approach this issue as "generation from visual input," \cite{bernardi16} describe other approaches to the issue of image caption generation, showing that this is simply one of the possible routes. Some shortcomings of this approach that they name include the inability of the system to generate captions for visual input where the system cannot recognize any salient elements. They also tackle the issue of evaluation, listing the variety of measures that can be used to that end when it comes to caption generation (as, naturally, simpler ones like accuracy would not be a good match); they admit that human judgement or measures that mimic human judgement are key when it comes to evaluating automatically generated captions.\footnote{MS}
 
-Given how little information we could find on the fine-tuning of CNN+LSTM image captioning models, within this project we would like to explore the extent to which a trained model of such architecture can be adapted to another domain and how some of the hyperparameters of that process can influence the outcome. We expect this process to be effective to an extent, but it may also break the model at some point. We hope for the fine-tuned model to perform better on the images from the new domain than the non-fine-tuned one, which we aim to evaluate using human judgement. Throughout the project, Dominik focused on the influence of hyperparameters, while Maria on the evaluation, with both authors inventing ways to adapt the model to their needs and identify and fix potential issues.\footnote{MS} 
+Given how little information we could fine on the fine-tuning of CNN+LSTM image captioning models, within this project we would like to explore the extent to which a trained model of such architecture can be adapted to another domain and how some of the hyperparameters of that process can influence the outcome. We expect this process to be effective to an extent, but it may also break the model at some point. We hope for the fine-tuned model to perform better on the images from the new domain than the non-fine-tuned one, which we aim to evaluate using human judgement. Throughout the project, Dominik focused on the influence of hyperparameters, while Maria on the evaluation, with both authors inventing ways to adapt the model to their needs and identify and fix potential issues.\footnote{MS} 
 
 In Section 2 we describe the materials and methods used to address the aforementioned questions, such as the architecture of the model, the datasets, and the evaluation methods. In Section 3 we present the results of our inquiry. In Section 4 we discuss how they answer our questions and how they relate to previous work. Finally, in Section 5 we offer conclusions and suggestions for future projects on this topic.\footnote{MS}
 
@@ -122,6 +122,66 @@ The questionnaire was filled out by 6 people. While we would like a larger sampl
 \end{tabular}
 \end{center}
 \caption{\label{unfiltered-table} Best captions per image in the unfiltered imageCLEF test set. }
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|p{1cm}|p{4.5cm}|}
+\hline \bf Image & \bf Best model (\% responses) \\ \hline
+40416 & original (83.3\%)  \\
+39158 & original (50\%)  \\
+25053 & original (83.3\%)  \\
+30620 & 100\_1.0 (66.7\%)  \\
+32397 & 100\_0.2 (66.7\%) \\
+38937 & original (50\%) \\
+39005 & 100\_0.1 (33.3\%) or 100\_0.15 (33.3\%) or 100\_0.2 (33.3\%) \\
+40120 & original (66.7\%) \\
+23588 & 100\_1.0 (83.3\%)  \\
+39472 & 100\_0.1 (66.7\%)  \\
+30138 & original (50\%)  \\
+40202 & 100\_0.1 (83.3\%)  \\
+35895 & original (66.7\%)  \\
+32663 & 100\_0.2 (83.3\%)   \\
+30705 & original (83.3\%) \\
+38081 & 100\_0.15 (66.7\%) \\
+31571 & original (100\%) \\
+35858 & original (66.7\%) \\
+37836 & 100\_0.1 (33.3\%) or 100\_0.15 (33.3\%) \\
+39239 & 100\_0.15, 100\_0.2, and 100\_1.0 (50\%)\footnote{These models generated identical captions.} \\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{filtered-table} Best captions per image in the filtered imageCLEF test set. }
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|p{2cm}|p{3.5cm}|}
+\hline \bf Image & \bf Best model (\% responses) \\ \hline
+2116444946\_ 1f5d1fe5d1 & original (100\%)  \\
+2316097768\_ ef662f444b & original (100\%)  \\
+2439384468\_ 58934deab6 & original (66.7\%)  \\
+2112921744\_ 92bf706805 & 100\_0.2 (50\%)  \\
+2392460773\_ 2aa01eb340 & original (100\%) \\
+2434006663\_ 207a284cec & original (100\%) \\
+2308256827\_ 3c0a7d514d & original (100\%) \\
+2111360187\_ d2505437b7 & original (66.7\%) \\
+2271671533\_ 7538ccd556 & original (66.7\%)  \\
+2328616978\_ fb21be2b87 & original (100\%)  \\
+2456907314\_ 49bc4591c4 & original (66.7\%)  \\
+2229179070\_ dc8ea8582e & 100\_0.1 (100\%)  \\
+2279980395\_ 989d48ae72 & 100\_0.1 (88.3\%)  \\
+2393971707\_ bce01ae754 & original (83.3\%)   \\
+211277478\_ 7d43aaee09 & 100\_0.1 (50\%) \\
+2337919839\_ df83827fa0 & original (83.3\%) \\
+2447035752\_ 415f4bb152 & original (50\%) \\
+23445819\_ 3a458716c1 & 100\_0.2 (66.7\%) \\
+2448210587\_ 9fe7ea5f42 & original (33.3\%) \\
+2445654384\_ 4ee3e486e1 & 100\_0.1 (50\%) or 100\_0.2 (50\%)\\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{flickr-table} Best captions per image in the Flickr8k test set. }
 \end{table}
 
 \section{Discussion \textbf{MS and/or DK}}
