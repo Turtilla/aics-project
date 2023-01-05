@@ -205,9 +205,13 @@ Finally, it is worth keeping in mind that some of the apparent weirdness of the 
 
 \textit{Here we compare our results to our initial expectations and decide how they answered questions, we also contrast them with prior work (if there is any). Highlight why what we did was relevant to the field.}
 
-\section{Conclusions and further work \textbf{MS and/or DK}}
+\section{Conclusions and further work \textbf{MS}}
 
 \textit{Here we should summarize what we have done and suggest what more could be done on this topic.}
+
+Throughout this project we have explored and tested how a CNN and LSTM-based image caption generation model could be fine-tuned, or adapted to a new domain, as represented by a somewhat different image-caption dataset. We have identified points that can be especially problematic, such as differences in the vocabulary and the subsequent generation of UNK tokens in the captions. We have determined that if the domains are too different and too much fine-tuning data is fed to the model, the generation will start to completely fail or focus only on a very narrow range of words, producing very ungrammatical captions. We have also collected human judgements and determined that while fine-tuning does slighly increase the quality of the captions on the new dataset, all of them, regardless of the model, were still considered weird, mismatched, or unnatural, and that the structure of the sentences in the original dataset may have a large influence on how they are generated even after fine-tuning (e.g. trying to feature people in every caption). 
+
+While we have addressed the issues that we raised in the introduction, we were not able to explore all the possible variables in domain adaptation of models of this kind, as it was beyond the scope of this project. However, we are certain that it would be very interesting to see how other hyperparameters than just the training data size can influence the outcome, and what the interplay between them could be. It would also be fascinating to see similar research pertaining to other model architectures, especially trying to identify the optimal hyperparameters for fine-tuning transformer-based image caption generation models. Finally, it would be interesting to explore other potential ways of dealing with the vocabulary mismatch between different datasets.
 
 \begin{table}
 \centering
