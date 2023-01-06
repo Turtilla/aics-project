@@ -24,51 +24,47 @@
 \maketitle
 \begin{abstract}
 
-Within this project we aim to explore how finetuning a CNN and LSTM-based image captioning model on a new dataset influences its performance on both the old and new data, along with what role some of the parameters, such as finetuning data size or the prevalence of out-of-vocabulary tokens in captions play in the process. We discover that differences in vocabulary play a major role and that providing too much fine-tuning data can cause the whole system to fail. We conclude that domain adaptation can be difficult to carry out, but perhaps worth attempting in certain cases.\footnote{MS} 
+Within this project we aim to explore how finetuning a CNN and LSTM-based image captioning model on a new dataset influences its performance on both the old and new data, along with what role some of the parameters, such as finetuning data size or the prevalence of out-of-vocabulary tokens in captions play in the process. We discover that differences in vocabulary play a major role and that providing too much fine-tuning data can cause the whole system to fail. We conclude that domain adaptation can be difficult to carry out, but perhaps worth attempting in certain cases.
 
 \end{abstract}
 
-\section{Introduction}
+\section{Introduction (MS)}
 
-\textit{Here we will have the introduction: some general talk, a little summary of the background reading (do we need more reading?), our questions that we want answered.}
+Automated image caption generation is an intersectional topic, combining advances in the fields of computer vision and natural language processing. It is not only an interesting and challenging task, but also one with useful real-life implementations, such as assisting people with vision impairments in a variety of ways. It is therefore quite relevant to explore a variety of issues that can be encountered in the field, in order to improve the performance of potential models and increase their relevance in practical applications.
 
-Automated image caption generation is an intersectional topic, combining advances in the fields of computer vision and natural language processing. It is not only an interesting and challenging task, but also one with useful real-life implementations, such as assisting people with vision impairments in a variety of ways. It is therefore quite relevant to explore a variety of issues that can be encountered in the field, in order to improve the performance of potential models and increase their relevance in practical applications.\footnote{MS}
+One potential issue with image captioning systems is that of domain adaptation, meaning adapting a trained system to somewhat different data. While it is not uncommon to encounter e.g. pre-trained image processing components in image caption generation models, it would appear that the general consensus is to train a new captioning model for every new dataset. This, however, may lead to an unnecessary waste of resources, especially if large amounts of data are used for training; another potential issue is there not always being enough data to train a model from scratch. An alternative in that case would be domain adaptation.
 
-One potential issue with image captioning systems is that of domain adaptation, meaning adapting a trained system to somewhat different data. While it is not uncommon to encounter e.g. pre-trained image processing components in image caption generation models, it would appear that the general consensus is to train a new captioning model for every new dataset. This, however, may lead to an unnecessary waste of resources, especially if large amounts of data are used for training; another potential issue is there not always being enough data to train a model from scratch. An alternative in that case would be domain adaptation.\footnote{MS}
+Some more lightweight, but well-performing image captioning architectures include ones with a CNN-based image processing component and LSTM-based language generation component; their performance can be further increased by incorporating some form of attention, which allows for a more precise identification of what is relevant to the caption generation at what point. The particular model used in this project is based on \cite{xu2015attend}, with the implementation by \cite{ilinykh}. In the model, the encoder is a convolutional network, from which representations of elements of the picture - feature vectors - are obtained. The decoder is an LSTM network with attention, determining what parts of the image are the most relevant for generating a given element of the caption.
 
-Some more lightweight, but well-performing image captioning architectures include ones with a CNN-based image processing component and LSTM-based language generation component; their performance can be further increased by incorporating some form of attention, which allows for a more precise identification of what is relevant to the caption generation at what point. The particular model used in this project is based on \cite{xu2015attend}, with the implementation by \cite{ilinykh}. In the model, the encoder is a convolutional network, from which representations of elements of the picture - feature vectors - are obtained. The decoder is an LSTM network with attention, determining what parts of the image are the most relevant for generating a given element of the caption (ADD WHICH KIND OF ATTENTION?).\footnote{MS} 
+Another way of employing attention in a similar model is presented in \cite{lu16}, where a special "visual sentinel" helps determine when to attend to the data from the image and when to the information from the language model, as not all the words are equally represented in an image - for instance, articles or other determiners, particles, etc., stem more from the requirements of a given grammatical structure or content word rather than the scene that is being described. However, since this project did not delve into the contribution of each of these elements in caption generation, it was found to be superfluous in our particular case, even though it can lead to improved performance.
 
-Another way of employing attention in a similar model is presented in \cite{lu16}, where a special "visual sentinel" helps determine when to attend to the data from the image and when to the information from the language model, as not all the words are equally represented in an image - for instance, articles or other determiners, particles, etc., stem more from the requirements of a given grammatical structure or content word rather than the scene that is being described. However, since this project did not delve into the contribution of each of these elements in caption generation, it was found to be superfluous in our particular case, even though it can lead to improved performance.\footnote{MS}
+The topic of domain adaptation in caption generation itself does not appear to be widely studied. However, \cite{hesselSW15} touche upon it in their paper on the importance of the language model versus the image processing component, where they prove that a good language model can produce decent captions even with poor image input. However, what the authors actually discuss is only fine-tuning the image recognition element of the model. While that is naturally helpful, especially since models of that kind require massive amounts of training data, it does not fully address the issue of fine-tuning a whole image caption generation model, and, in fact, utilizing pre-trained CNN components has become rather common.
 
-The topic of domain adaptation in caption generation itself does not appear to be widely studied. However, \cite{hesselSW15} touche upon it in their paper on the importance of the language model versus the image processing component, where they prove that a good language model can produce decent captions even with poor image input. However, what the authors actually discuss is only fine-tuning the image recognition element of the model. While that is naturally helpful, especially since models of that kind require massive amounts of training data, it does not fully address the issue of fine-tuning a whole image caption generation model, and, in fact, utilizing pre-trained CNN components has become rather common.\footnote{MS}
+While all of the aforementioned papers seem to approach this issue as "generation from visual input," \cite{bernardi16} describe other approaches to the issue of image caption generation, showing that this is simply one of the possible routes. Some shortcomings of this approach that they name include the inability of the system to generate captions for visual input where the system cannot recognize any salient elements. They also tackle the issue of evaluation, listing the variety of measures that can be used to that end when it comes to caption generation (as, naturally, simpler ones like accuracy would not be a good match); they admit that human judgement or measures that mimic human judgement are key when it comes to evaluating automatically generated captions.
 
-While all of the aforementioned papers seem to approach this issue as "generation from visual input," \cite{bernardi16} describe other approaches to the issue of image caption generation, showing that this is simply one of the possible routes. Some shortcomings of this approach that they name include the inability of the system to generate captions for visual input where the system cannot recognize any salient elements. They also tackle the issue of evaluation, listing the variety of measures that can be used to that end when it comes to caption generation (as, naturally, simpler ones like accuracy would not be a good match); they admit that human judgement or measures that mimic human judgement are key when it comes to evaluating automatically generated captions.\footnote{MS}
+Given how little information we could fine on the fine-tuning of CNN+LSTM image captioning models, within this project we would like to explore the extent to which a trained model of such architecture can be adapted to another domain and how some of the hyperparameters of that process can influence the outcome. We expect this process to be effective to an extent, but it may also break the model at some point. We hope for the fine-tuned model to perform better on the images from the new domain than the non-fine-tuned one, which we aim to evaluate using human judgement. Throughout the project, Dominik focused on the influence of hyperparameters, while Maria on the evaluation, with both authors inventing ways to adapt the model to their needs and identify and fix potential issues.
 
-Given how little information we could fine on the fine-tuning of CNN+LSTM image captioning models, within this project we would like to explore the extent to which a trained model of such architecture can be adapted to another domain and how some of the hyperparameters of that process can influence the outcome. We expect this process to be effective to an extent, but it may also break the model at some point. We hope for the fine-tuned model to perform better on the images from the new domain than the non-fine-tuned one, which we aim to evaluate using human judgement. Throughout the project, Dominik focused on the influence of hyperparameters, while Maria on the evaluation, with both authors inventing ways to adapt the model to their needs and identify and fix potential issues.\footnote{MS} 
+In Section 2 we describe the materials and methods used to address the aforementioned questions, such as the architecture of the model, the datasets, and the evaluation methods. In Section 3 we present the results of our inquiry. In Section 4 we discuss how they answer our questions and how they relate to previous work. Finally, in Section 5 we offer conclusions and suggestions for future projects on this topic.\footnote{(MS)}
 
-In Section 2 we describe the materials and methods used to address the aforementioned questions, such as the architecture of the model, the datasets, and the evaluation methods. In Section 3 we present the results of our inquiry. In Section 4 we discuss how they answer our questions and how they relate to previous work. Finally, in Section 5 we offer conclusions and suggestions for future projects on this topic.\footnote{MS}
+\section{Materials and Methods (MS and DK)}
 
-\section{Materials and Methods}
+Within this section we will describe the resources that we used in the project. We will specify the characteristics of the image captioning model, the two datasets that were used to train or fine-tune it, and the questionnaire we utilized to elicit human judgements of the best captions.\footnote{(MS)}
 
-\textit{Here we need to describe the databases that we used and the code that we used, and what we added on our own. Then we need to describe how we went about evaluation.}
-
-Within this section we will describe the resources that we used in the project. We will specify the characteristics of the image captioning model, the two datasets that were used to train or fine-tune it, and the questionnaire we utilized to elicit human judgements of the best captions.\footnote{MS}
-
-\subsection{The image captioning model \textbf{DK}}
-\subsection{The code \textbf{MS and DK}}
+\subsection{The image captioning model (DK)}
+\subsection{The code (MS and DK)}
 
 \textit{Write about the division into files, a bit what's what, what we added and what was there. I did the evaluation part. I doubt we need to describe it in much detail, can always say that the readme has instructions and all the elements are documented, but I'd still have a bit of a summary of what we did here.}
 
-The testing and evaluation part was conducted in a variety of Jupyter Notebook files. While the initial plan was to contain all the information in one file; unfortunately, due to GitHub limitations, that Notebook would have been too large to upload due to the number of generated ans printed image and caption pairs. Therefore, all training data sized but 2k and 5k were tested in separate notebooks using the same methods, adapted from \cite{ilinykh}, stored in a separate file, and imported into the notebook. The captions were generated using beam search and then presented together with the mappings of the attention on the image. \footnote{MS}
+The testing and evaluation part was conducted in a variety of Jupyter Notebook files. While the initial plan was to contain all the information in one file; unfortunately, due to GitHub limitations, that Notebook would have been too large to upload due to the number of generated ans printed image and caption pairs. Therefore, all training data sized but 2k and 5k were tested in separate notebooks using the same methods, adapted from \cite{ilinykh}, stored in a separate file, and imported into the notebook. The captions were generated using beam search and then presented together with the mappings of the attention on the image.
 
-Other than relatively minor fixes that were required to make the code run, we decided to manually exclude the UNK token from the generation process by enforcing the lowest possible probability on it in the beam search. While this meant that we could not evaluate to what extent the models favored generating that token, it did allow us to obtain captions that sounded more natural, which was paramount for the subsequent human evaluation.\footnote{MS} 
+Other than relatively minor fixes that were required to make the code run, we decided to manually exclude the UNK token from the generation process by enforcing the lowest possible probability on it in the beam search. While this meant that we could not evaluate to what extent the models favored generating that token, it did allow us to obtain captions that sounded more natural, which was paramount for the subsequent human evaluation.\footnote{(MS)} 
 
-\subsection{Flickr8k \textbf{DK}}
-\subsection{imageCLEF \textbf{MS}}
+\subsection{Flickr8k (DK)}
+\subsection{imageCLEF (MS)}
 
 The second dataset used in the project was the IAPR TC-12 Benchmark, called imageCLEF in this paper. This dataset consists of 20,000 images from a variety of real life situations. Each image is paired with a description consisting of a number of consecutive utterances specifying what the image is depicting \cite{imageclef}. The assumption made in this project is that the first fragment of the description contains the most salient elements. Unlike Flickr8k, imageCLEF contains many more images that do not include people or animals. Additionally, the way the descriptions are formulated is also different from Flickr8k.
 
-\subsection{Human judgement questionnaire \textbf{MS}}
+\subsection{Human judgement questionnaire (MS)}
 
 Having produced results (captions) using the model and the data described in the previous sections, we decided to test which of the plausible-sounding captions were the best match for the images. The only models that were somewhat consistent producing coherent captions were the non-fine-tuned (original) model and the "100" training data size models (with 4 variations of UNK filter: 0.1, 0.15, 0.2, no filter). In order to collect judgements, 20 images from 3 test sets each were collected, together with the captions generated by the aforementioned models. The test sets were: unfiltered imageCLEF, filtered (max 10\% UNK tokens) imageCLEF, and Flickr8k. The questionnaire was constructed and hosted using Google Forms.
 
@@ -76,7 +72,7 @@ The questionnaire itself consisted of five sections. In the first one, a modicum
 
 The form was subsequently distributed online, and the responses were later processed and a summary will be presented in the Results section.
 
-\section{Results \textbf{MS and DK?}}
+\section{Results (MS and DK)}
 
 \textit{Here we should summarize our results, in terms of:
 \begin{enumerate}
@@ -85,9 +81,9 @@ The form was subsequently distributed online, and the responses were later proce
 \end{enumerate}
 Include figures and tables as much as we can/as much as is reasonable.}
 
-\subsection{Hyperparameters \textbf{DK}}
+\subsection{Hyperparameters (DK)}
 
-\subsection{Caption Evaluation \textbf{MS}}
+\subsection{Caption Evaluation (MS)}
 
 As described previously in the Materials and Methods section, the only models that consistently produced captions for almost all test images were the original and the "100" models. The "200" models still generated most of the captions, but many of them started being rather nonsensical or non-grammatical. This process continued in the "500" and "1000" models with fewer and fewer captions being generated successfully, and those generated ones being absolutely nonsensical. Finally in the "2k" and "5k" models most captions could not be generated.\footnote{MS} \textit{This part can be moved somewhere else if it fits better for your hyperparameters section.}
 
@@ -201,13 +197,11 @@ Clearly, while some degree of improvement can be obtained by this kind of fine-t
 
 Finally, it is worth keeping in mind that some of the apparent weirdness of the captions may stem from the relatively small vocabulary that the models had, which was likely lacking the proper words to describe certain elements in the images, even when the ones whose captions contained many new words were filtered out. 
 
-\section{Discussion \textbf{MS and/or DK}}
+\section{Discussion (DK)}
 
 \textit{Here we compare our results to our initial expectations and decide how they answered questions, we also contrast them with prior work (if there is any). Highlight why what we did was relevant to the field.}
 
-\section{Conclusions and further work \textbf{MS}}
-
-\textit{Here we should summarize what we have done and suggest what more could be done on this topic.}
+\section{Conclusions and further work (MS)}
 
 Throughout this project we have explored and tested how a CNN and LSTM-based image caption generation model could be fine-tuned, or adapted to a new domain, as represented by a somewhat different image-caption dataset. We have identified points that can be especially problematic, such as differences in the vocabulary and the subsequent generation of UNK tokens in the captions. We have determined that if the domains are too different and too much fine-tuning data is fed to the model, the generation will start to completely fail or focus only on a very narrow range of words, producing very ungrammatical captions. We have also collected human judgements and determined that while fine-tuning does slighly increase the quality of the captions on the new dataset, all of them, regardless of the model, were still considered weird, mismatched, or unnatural, and that the structure of the sentences in the original dataset may have a large influence on how they are generated even after fine-tuning (e.g. trying to feature people in every caption). 
 
@@ -231,9 +225,36 @@ and even & more things  \\\hline
 
 \appendix
 
-\section{Example Appendix}
+\section{Appendix}
 \label{sec:appendix}
 
-\textit{Here we should link our repository and also make sure that it is well-organized and has proper READMEs.}
+\begin{enumerate}
+    \item The project repository with instructions: \url{https://github.com/Turtilla/aics-project}
+\end{enumerate}
+
+\section{Statement of Contribution}
+\label{sec:contribution}
+
+\textit{Here we have our statement of who did what.}
+While really detailed information on who developed what is available in the code, the code is not the only thing that we shared work on. Below one can find the details of who contributed what to the project.
+\begin{enumerate}
+    \item \textbf{Developing project ideas:} both Dominik and Maria. Selecting the initial ideas from the ones suggested in the course page mostly by Dominik, ideas about working with comicbooks and contacting researchers related to that by Maria. Final idea selected under the advice from Nikolai and Simon by both project authors. 
+    \item \textbf{Setting up resources:} figuring out how to access the datasets used in the project by Dominik, using the existing code by Nikolai both by Maria and Dominik.
+    \item \textbf{Code:} detailed information on code contribution can be found in code documentation. 
+    \begin{enumerate}
+        \item Evaluation Jupyter Notebooks: Maria
+        \item Dataset classes: Dominik
+        \item Relation filters: Maria and code shared by Simon
+        \item Fine-tuning loop: adapted by Maria and Dominik from Nikolai's code.
+        \item Models and some preprocessing: Nikolai's code.
+        \item Caption generation and attention visualization: Nikolai's code, with changes by Maria and Dominik.
+        \item Division of the code into separate files, turning it into classes: Dominik.
+        \item Documentation: Maria with Dominik's help.
+    \end{enumerate}
+    \item \textbf{Questionnaire:} Maria.
+    \item \textbf{Evaluation:} evaluation of the outputs of the notebooks by Dominik and Maria (for the questionnaire), evaluation of questionnaire answers by Maria.
+    \item \textbf{Writing up:} both Dominik and Maria. Abstract by Maria (cannot put the initials there). While the initials signify the person who wrote most of the section, small changes by the other person are possible. Some sections' authorship is shared; in that case a footnote is put at the end of the part written by one person.
+    \item \textbf{Repository management:} Maria with Dominik's help.
+\end{enumerate}
 
 \end{document}
