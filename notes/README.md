@@ -20,4 +20,4 @@ While in the project instructions it was recommended to keep a lab log, we resor
 + Jan 3: writing the abstract and introduction, updating bibliography, finishing and sending out the questionnaire (MS).
 + Jan 4: preliminary assignment of parts of the paper between Maria and Dominik (MS).
 + Jan 5: processing questionnaire results, writing about methods (questionnaire, imageCLEF), results (questionnaire), conclusions (MS).
-+ Jan 6: updating the repository file structure, updating/adding readme files, updating the ``requirements.txt file`` (MS).
++ Jan 6: updating the repository file structure, updating/adding readme files, updating the ``requirements.txt file``, adding statement of contribution to the paper (MS).
