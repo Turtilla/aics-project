@@ -1,6 +1,6 @@
 This folder contains saved models, checkpoints and other files that were output running the code. While all of them are accessible in Dominik's MLTGPU directory, some of them were trained by him (2k and 5k) and some by Maria (the rest). 
 
-The fine-tuned models are available on the server and should be accessible when running the notebook on the server. For accessing them locally, use the following command (if you have access to the server):
+Naturally, the models are too large to be included here. The fine-tuned models are available on the server and should be accessible when running the notebook on the server. For accessing them locally, use the following command (if you have access to the server):
 + ``scp -P62266 XYZ@mltgpu.flov.gu.se:/srv/data/guskunkdo/saved/FILENAME YOUR/FILE/PATH``  
 
 The filenames are constructed the following way:
