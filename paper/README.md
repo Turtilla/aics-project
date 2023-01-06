@@ -1,1 +1,1 @@
-
+Within this folder you can find the paper and the files required for its creation (since we are working with LaTeX, those are necessary). The final paper will be ``paper.pdf``. Authorship of parts is marked there, and a statement of contribution is included in the paper itself.
