@@ -3,3 +3,5 @@ Contains the [ImageCLEF/IAPR TC 12 Photo Collection](https://www.imageclef.org/p
 Also contains the pre-trained (Flickr8k) model and the corresponding wordmap, sourced from the course folder on the mltgpu server using the following commands (run from command line when in the data folder):
 + MODEL: scp -P62266 XYZ@mltgpu.flov.gu.se:/srv/data/aics/03-image-captioning/data/BEST_checkpoint_flickr8k_5_10.pth.tar YOUR/FILE/PATH
 + WORDMAP: scp -P62266 XYZ@mltgpu.flov.gu.se:/srv/data/aics/03-image-captioning/data/out/wordmap_flickr8k_5_10.json YOUR/FILE/PATH
+
+While the project instructions say that this is where we should store our output as well, we have the ``saved`` folder for that instead - and we hope that is acceptable.
