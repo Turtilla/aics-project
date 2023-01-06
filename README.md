@@ -13,7 +13,7 @@ Each folder in this repository contains its own README. In case it should contai
 
 ### (ii) INSTRUCTIONS:
 + This project makes use of the [ImageCLEF/IAPR TC 12 Photo Collection](https://www.imageclef.org/photodata) and [Flickr8k](https://www.kaggle.com/datasets/adityajn105/flickr8k) datasets. Please download them and store them in the ``data/`` folder if running the code locally.
-+ We recommend using a virtual environment to install all the necessary dependencies (see ``library/requirements.txt``). 
++ We recommend using a virtual environment to install all the necessary dependencies (see ``library/requirements.txt``). Make sure to be running a relatively new release of Python (e.g. Python 3.10).
 + When running the code locally you will also need to download the original model and wordmap (as per the README in ``data/`` as well as (potentially) the fine-tuned models (see ``saved/``).  
 
 While more options are hidden in the code (different relation filters, for example), you will mainly need to run the ``main.py`` script from the command line to fine-tune the original model. Only do this if you want to fine-tune models with different data size, otherwise, download them from MLTGPU (as specified in ``saved/``).
