@@ -1,13 +1,15 @@
-# AICS-project
+# AICS project by Dominik Künkele and Maria Szawerna
 
-### Possible topics:
-1. Inquire about sound as a sense (also maybe like non-language sound identification/labelling? need dataset)
-2. Updating the vision component of the first paper to modern AI vision
-3. Visual metaphors (based on different languages?)
-4. Comicbook stuff (computer vision - detecting/labelling movement) 
+### (i) REPOSITORY STRUCTURE:  
+Each folder in this repository contains its own README. In case it should contain some datasets or other large files, the instructions on how to obtain them or where to obtain them from are in the README for that folder. All of those files are also available on MLTGPU and when running the code there, they should be accessible.
 
-### Resources:
-+ https://ebdtheque.univ-lr.fr/database/ **HAVE ACCESS**
-+ https://iapr-tc10.univ-lr.fr/?page_id=71#comic-book-datasets suggestion from Dr. Rigaud
-+ https://www.visuallanguagelab.com/vlrc **waiting on access**
-+ http://www.christophe-rigaud.com/en/cv/publication/?fbclid=IwAR1XypwR4r1n-aYqtlBLFYJyxJM5QYZhDOxn_MmsvmMxwsKK4-Xf1Ht1GKw some background reading?
++ ``code/``: contains all of the code for this project, in .py and .ipynb files. A detailed description of the files is available in the folder, along with who created what (which is also specified in detail in file documentation).
++ ``data/``: contains a README file specifying how and where to get the datasets used in the project. Does **NOT** contain saved models (see: ``saved/``).
++ ``library/``: contains the requirements for running the project and instructions on how to install those, along with advice on virtual environments.
++ ``notes/``: contains a rough timeline of our work on the project and division of labor.
++ ``paper/``: contains the project paper files and the final paper.
++ ``saved/``: contains the outputs of our file training and instructions on how to download the fine-tuned models.  
+
+### (ii) INSTRUCTIONS:
+
+### (iii) WORKPLAN, TEACHER COMMENTS
