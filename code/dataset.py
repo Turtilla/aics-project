@@ -47,7 +47,6 @@ class Sample:
         encoded_caption (torch.LongTensor): The caption encoded using some wordmap.
         image (torch.FloatTensor): A tensor representation of the image associated with the sample.
     '''
-    # by Dominik
     image_id: str
     caption: str
     image_path: str

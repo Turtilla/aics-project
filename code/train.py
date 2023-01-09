@@ -27,7 +27,7 @@ training_parameters = {
 }
 
 class CaptionTrainer:
-    '''Most of the code by Nikolai Ilinykh, adapted into a class by Dominik.  TODO: make sure that is correct!!!
+    '''Most of the code by Nikolai Ilinykh, adapted into a class by Dominik.
     This class allows for defining how a model should be trained and then providing methods for carrying that training out.
 
     Attributes:

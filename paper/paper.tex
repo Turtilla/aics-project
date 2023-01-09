@@ -24,7 +24,7 @@
 \maketitle
 \begin{abstract}
 
-Within this project we aim to explore how finetuning a CNN and LSTM-based image captioning model on a new dataset influences its performance on both the old and new data, along with what role some of the parameters, such as finetuning data size or the prevalence of out-of-vocabulary tokens in captions play in the process. We discover that differences in vocabulary play a major role and that providing too much fine-tuning data can cause the whole system to fail. We conclude that domain adaptation can be difficult to carry out, but perhaps worth attempting in certain cases.
+    Within this project we aim to explore how fine-tuning a CNN and LSTM-based image captioning model on a new dataset influences its performance on both the old and new data, along with what role some of the parameters, such as fine-tuning data size or the prevalence of out-of-vocabulary tokens in captions play in the process. We discover that differences in vocabulary play a major role and that providing too much fine-tuning data can cause the whole system to fail. We conclude that domain adaptation can be difficult to carry out, but perhaps worth attempting in certain cases.
 
 \end{abstract}
 
@@ -38,11 +38,11 @@ Some more lightweight, but well-performing image captioning architectures includ
 
 Another way of employing attention in a similar model is presented in \cite{lu16}, where a special "visual sentinel" helps determine when to attend to the data from the image and when to the information from the language model, as not all the words are equally represented in an image - for instance, articles or other determiners, particles, etc., stem more from the requirements of a given grammatical structure or content word rather than the scene that is being described. However, since this project did not delve into the contribution of each of these elements in caption generation, it was found to be superfluous in our particular case, even though it can lead to improved performance.
 
-The topic of domain adaptation in caption generation itself does not appear to be widely studied. However, \cite{hesselSW15} touche upon it in their paper on the importance of the language model versus the image processing component, where they prove that a good language model can produce decent captions even with poor image input. However, what the authors actually discuss is only fine-tuning the image recognition element of the model. While that is naturally helpful, especially since models of that kind require massive amounts of training data, it does not fully address the issue of fine-tuning a whole image caption generation model, and, in fact, utilizing pre-trained CNN components has become rather common.
+The topic of domain adaptation in caption generation itself does not appear to be widely studied. However, \cite{hesselSW15} touch upon it in their paper on the importance of the language model versus the image processing component, where they prove that a good language model can produce decent captions even with poor image input. However, what the authors actually discuss is only fine-tuning the image recognition element of the model. While that is naturally helpful, especially since models of that kind require massive amounts of training data, it does not fully address the issue of fine-tuning a whole image caption generation model, and, in fact, utilizing pre-trained CNN components has become rather common.
 
 While all of the aforementioned papers seem to approach this issue as "generation from visual input," \cite{bernardi16} describe other approaches to the issue of image caption generation, showing that this is simply one of the possible routes. Some shortcomings of this approach that they name include the inability of the system to generate captions for visual input where the system cannot recognize any salient elements. They also tackle the issue of evaluation, listing the variety of measures that can be used to that end when it comes to caption generation (as, naturally, simpler ones like accuracy would not be a good match); they admit that human judgement or measures that mimic human judgement are key when it comes to evaluating automatically generated captions.
 
-Given how little information we could fine on the fine-tuning of CNN+LSTM image captioning models, within this project we would like to explore the extent to which a trained model of such architecture can be adapted to another domain and how some of the hyperparameters of that process can influence the outcome. We expect this process to be effective to an extent, but it may also break the model at some point. We hope for the fine-tuned model to perform better on the images from the new domain than the non-fine-tuned one, which we aim to evaluate using human judgement. Throughout the project, Dominik focused on the influence of hyperparameters, while Maria on the evaluation, with both authors inventing ways to adapt the model to their needs and identify and fix potential issues.
+Given how little information we could find on the fine-tuning of CNN+LSTM image captioning models, within this project we would like to explore the extent to which a trained model of such architecture can be adapted to another domain and how some of the hyperparameters of that process can influence the outcome. We expect this process to be effective to an extent, but it may also break the model at some point. We hope for the fine-tuned model to perform better on the images from the new domain than the non-fine-tuned one, which we aim to evaluate using human judgement. Throughout the project, Dominik focused on the influence of hyperparameters, while Maria on the evaluation, with both authors inventing ways to adapt the model to their needs and identify and fix potential issues.
 
 In Section 2 we describe the materials and methods used to address the aforementioned questions, such as the architecture of the model, the datasets, and the evaluation methods. In Section 3 we present the results of our inquiry. In Section 4 we discuss how they answer our questions and how they relate to previous work. Finally, in Section 5 we offer conclusions and suggestions for future projects on this topic.\footnote{(MS)}
 
@@ -51,15 +51,27 @@ In Section 2 we describe the materials and methods used to address the aforement
 Within this section we will describe the resources that we used in the project. We will specify the characteristics of the image captioning model, the two datasets that were used to train or fine-tune it, and the questionnaire we utilized to elicit human judgements of the best captions.\footnote{(MS)}
 
 \subsection{The image captioning model (DK)}
+
+The goal of this project was to analyze how the generation of captions changes, when an already pre-trained model is fine-tuned on new data from a different domain. For this, we utilized code written by \cite{ilinykh} that implemented a model described by \cite{xu2015attend}. We didn't adapt the model at all, but only fine-tuned it with a different dataset. In the following paragraph, the architecture model is summarized.
+
+The model consists of an \emph{Encoder} and a \emph{Decoder}. The \emph{Encoder} utilizes the ResNet-101 pre-trained model to extract features of the images \cite{resnet}. The last two layers are removed to only include the parts important for the feature extraction. The \emph{Decoder} then initializes the hidden state of an LSTM with the image representation and generates the caption word by word. Hereby, the LSTM also makes use of an attention mechanism that weights different parts of the image higher and lower, depending on how important they are to generate a word at a certain step. This attention can then be visualized as a heat map on the image. Dropout is used to prevent overfitting to training data.
+
 \subsection{The code (MS and DK)}
 
 \textit{Write about the division into files, a bit what's what, what we added and what was there. I did the evaluation part. I doubt we need to describe it in much detail, can always say that the readme has instructions and all the elements are documented, but I'd still have a bit of a summary of what we did here.}
 
-The testing and evaluation part was conducted in a variety of Jupyter Notebook files. While the initial plan was to contain all the information in one file; unfortunately, due to GitHub limitations, that Notebook would have been too large to upload due to the number of generated ans printed image and caption pairs. Therefore, all training data sized but 2k and 5k were tested in separate notebooks using the same methods, adapted from \cite{ilinykh}, stored in a separate file, and imported into the notebook. The captions were generated using beam search and then presented together with the mappings of the attention on the image.
+Loading the data was done in a \emph{PyTorch Dataset} class. Here, it is possible to define multiple parameters for loading the data. First of all, only captions are loded that contain relations. Here, we implemented two different methods. One is filtering the captions based on the POS and the other is a rule-based approach taken from \cite{Ghanimifard2018}. Furthermore, a total number of images that should be loaded can be defined. This loaded samples are then divided into training (0.8), validation (0.1) and testing (0.1) sets. Since the imageCLEF captions consists of multiple connected captions, we included an option to either just load the first caption or concatenate all with the conjunction \emph{and}. Lastly, we noted that changing the dataset presents us with a lot of words that are not included in the original vocabulary. To deal with this, we implemented a variable filter threshold to exclude captions that contain too many unknown words (\emph{unknown filter}).
 
-Other than relatively minor fixes that were required to make the code run, we decided to manually exclude the UNK token from the generation process by enforcing the lowest possible probability on it in the beam search. While this meant that we could not evaluate to what extent the models favored generating that token, it did allow us to obtain captions that sounded more natural, which was paramount for the subsequent human evaluation.\footnote{(MS)} 
+The training loop was mostly taken from \cite{ilinykh}. The pre-trained model is hereby fine-tuned on an unseen shuffled train dataset. After each epoch the model is validated with a validation dataset. This is done using BLEU-4 score. Since the imageCLEF dataset only consists of one independent caption instead of five as the Flickr8k dataset, the BLEU score is calculated only with one reference caption. The model is trained as long as the BLEU score doesn't improve for 20 epochs; the model with the best BLEU score is saved and used for testing and evaluating.
+
+The testing and evaluation part was conducted in a variety of Jupyter Notebook files. While the initial plan was to contain all the information in one file; unfortunately, due to GitHub limitations, that Notebook would have been too large to upload due to the number of generated and printed image and caption pairs. Therefore, all training data sized but 2k and 5k were tested in separate notebooks using the same methods, adapted from \cite{ilinykh}, stored in a separate file, and imported into the notebook. The captions were generated using beam search and then presented together with the mappings of the attention on the image.
+
+Other than relatively minor fixes that were required to make the code run, we decided to manually exclude the UNK token from the generation process by enforcing the lowest possible probability on it in the beam search. While this meant that we could not evaluate to what extent the models favored generating that token, it did allow us to obtain captions that sounded more natural, which was paramount for the subsequent human evaluation.\footnote{(MS)}
 
 \subsection{Flickr8k (DK)}
+
+The model was trained on the Flickr8k dataset \cite{flickr8k}. It consists of 8,000 images that were hand-selected to depict actions and events of people or animals rather than scenery and mood. These images each are paired with five captions describing the image generally. The captions are not related to each other and were created by different annotators.
+
 \subsection{imageCLEF (MS)}
 
 The second dataset used in the project was the IAPR TC-12 Benchmark, called imageCLEF in this paper. This dataset consists of 20,000 images from a variety of real life situations. Each image is paired with a description consisting of a number of consecutive utterances specifying what the image is depicting \cite{imageclef}. The assumption made in this project is that the first fragment of the description contains the most salient elements. Unlike Flickr8k, imageCLEF contains many more images that do not include people or animals. Additionally, the way the descriptions are formulated is also different from Flickr8k.
@@ -75,150 +87,177 @@ The form was subsequently distributed online, and the responses were later proce
 \section{Results (MS and DK)}
 
 \textit{Here we should summarize our results, in terms of:
-\begin{enumerate}
-    \item where did the performance exceed the best prior performance (we got BEST checkpoints?) \textbf{DK}
-    \item which models actually generated reasonable captions? where did they start falling apart? \textbf{MS or DK}
-\end{enumerate}
-Include figures and tables as much as we can/as much as is reasonable.}
+    \begin{enumerate}
+        \item where did the performance exceed the best prior performance (we got BEST checkpoints?) \textbf{DK}
+        \item which models actually generated reasonable captions? where did they start falling apart? \textbf{MS or DK}
+    \end{enumerate}
+    Include figures and tables as much as we can/as much as is reasonable.}
 
 \subsection{Hyperparameters (DK)}
 
+During the training, we tried different hyperparameters for loading the data. Changing the method for filtering captions that contain relations didn't provide big differences in first tests. Therefore, we utilized solely the simpler POS-based approach for all experiments.
+
+Concatenating all captions of the imageCLEF dataset was a too big challenge for the model and yielded worse results in first test than only using the first caption for each image. We concluded that the difference in syntax (more complex and longer sentences) as well as in semantics (more detailed descriptions) were too big to the Flickr8k dataset, the model was pre-trained on, but this hypothesis would need to be tested further in the future. For our experiments, we only used the first caption.
+
+For the experiments, the variable parameters were the \emph{number of samples} as well as the \emph{unknown filter}. The model was fine-tuned on a sample size (training set size) of 100 (80), 200 (160), 500 (400), 1,000 (800), 2,000 (1,600) and 5,000 (4,000). For each of these sample sizes, four different unknown filter thresholds were used: 0.1, 0.15, 0.2 and 1.
+
+As described previously in the Materials and Methods section, the only models that consistently produced captions for almost all test images were the original and the "100" models. The "200" models still generated most of the captions, but many of them started being rather nonsensical or non-grammatical. This process continued in the "500" and "1000" models with fewer and fewer captions being generated successfully, and those generated ones being absolutely nonsensical. Finally, in the "2k" and "5k" models most captions could not be generated.\footnote{MS}
+
+While the human evaluation is the focus of this experiment, it is still insightful to also check, how the model fares during training and validation, more specifically, how the BLEU score changes. Interestingly, the models with few data samples achieve very low BLEU scores, while the models with more samples achieve higher BLEU scores. Table \ref{BLEU-sample-sizes} shows the best achieved BLEU scores during validation with an unknown filter of 0.1. For other filter values, the results look similar. This is opposite to the observation mentioned before. A reason for this may be the calculation of the BLEU score. The BLEU score only evaluates the appearance of words, in this experiment 4-grams, but does not focus explicitly on grammaticality. A lower BLEU score, but grammatical correct sentences may mean that the model doesn't learn to relate the new captions to the image features, but that it still relies on the pre-trained generations. On the other hand, a higher BLEU score with low grammaticality may hint to the fact, that the model is now able to generate the correct words, but looses the pre-trained ability to understand syntax.
+
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|p{2cm}|p{2cm}|p{2cm}|}
+            \hline \bf number of samples & \bf highest BLEU score & \bf fine-tuned epoch \\ \hline
+            100                          & 0.065                  & 13                   \\
+            200                          & 0.091                  & 9                    \\
+            500                          & 0.146                  & 19                   \\
+            1000                         & 0.165                  & 18                   \\
+            2000                         & 0.201                  & 13                   \\
+            5000                         & 0.222                  & 9                    \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{\label{BLEU-sample-sizes} BLEU scores for different sample sizes (unknown filter 0.1) }
+\end{table}
+
+Looking at the unknown filter, higher thresholds produce in general better BLEU scores. Table \ref{BLEU-unknown-filter} shows the highest BLEU score for different unknown filter with 100 samples. This applies especially to the models with a larger number of samples, but the effect can be seen in all models. A reason for this may be the higher number of unknown tokens in the training data. Since, the model is also trained on generating unknown tokens, a higher share of unknown tokens in the training data will result in a higher share in the generated caption. Both sentences are therefore getting more similar, which results in a higher BLEU score. A solution for this problem could be excluding the unknown token from the model's vocabulary.
+
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|p{1.9cm}|p{2cm}|p{2cm}|}
+            \hline \bf unknown filter & \bf highest BLEU score & \bf fine-tuned epoch \\ \hline
+            0.1                       & 0.065                  & 13                   \\
+            0.15                      & 0.104                  & 18                   \\
+            0.2                       & 0.176                  & 12                   \\
+            1                         & 0.162                  & 19                   \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{\label{BLEU-unknown-filter} BLEU scores for different unknown filters (number of samples: 100) }
+\end{table}
+
 \subsection{Caption Evaluation (MS)}
 
-As described previously in the Materials and Methods section, the only models that consistently produced captions for almost all test images were the original and the "100" models. The "200" models still generated most of the captions, but many of them started being rather nonsensical or non-grammatical. This process continued in the "500" and "1000" models with fewer and fewer captions being generated successfully, and those generated ones being absolutely nonsensical. Finally in the "2k" and "5k" models most captions could not be generated.\footnote{MS} \textit{This part can be moved somewhere else if it fits better for your hyperparameters section.}
-
-The questionnaire was filled out by 6 people. While we would like a larger sample size, we believe that we can still draw some preliminary conclusions from their answers, and that it is sufficient taking the scope of the project into account. It is also likely that the length of the questionnaire could have put off other potential respondents. The people who filled the questionnaire out ranged between 25 and 31 years of age. Three of them identified as female, two as male, one selected "other" as a response in that option. Half of the respondents had an MA/MSc degree or equivalent, two a BA/BSc or equivalent, and one selected secondary school education as the highest completed level of education. None of the people who filled the questionnaire out were native speakers of English. More detailed data about their native language was not collected. 
+The questionnaire was filled out by 6 people. While we would like a larger sample size, we believe that we can still draw some preliminary conclusions from their answers, and that it is sufficient taking the scope of the project into account. It is also likely that the length of the questionnaire could have put off other potential respondents. The people who filled the questionnaire out ranged between 25 and 31 years of age. Three of them identified as female, two as male, one selected "other" as a response in that option. Half of the respondents had an MA/MSc degree or equivalent, two a BA/BSc or equivalent, and one selected secondary school education as the highest completed level of education. None of the people who filled the questionnaire out were native speakers of English. More detailed data about their native language was not collected.
 
 \begin{table}[h]
-\begin{center}
-\begin{tabular}{|p{1cm}|p{4.5cm}|}
-\hline \bf Image & \bf Best model (\% responses) \\ \hline
-15551 & 100\_0.1 (50\%)  \\
-20144 & original (50\%)  \\
-20343 & 100\_0.1 (33.3\%) or 100\_1.0 (33.3\%)  \\
-12761 & original (33.3\%) or 100\_1.0 (33.3\%)  \\
-22381 & 100\_0.1 (83.3\%) \\
-10821 & 100\_0.1 (100\%) \\
-18448 & original (100\%) \\
-17173 & original (66.7\%) \\
-13152 & original (66.7\%)  \\
-20272 & original (100\%)  \\
-11310 & 100\_0.1 (66.7\%)  \\
-14183 & 100\_1.0 (50\%)  \\
-10622 & original (50\%)  \\
-13123 & original (100\%)   \\
-19181 & 100\_1.0 (83.3\%) \\
-16920 & 100\_0.1 (100\%) \\
-11308 & original (50\%) \\
-14016 & original (83.3\%) \\
-21029 & original (100\%) \\
-18355 & original (33.3\%) or 100\_0.15 (33.3\%) or 100\_0.2 (33.3\%) \\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{unfiltered-table} Best captions per image in the unfiltered imageCLEF test set. }
+    \begin{center}
+        \begin{tabular}{|p{1cm}|p{4.5cm}|}
+            \hline \bf Image & \bf Best model (\% responses)                                \\ \hline
+            15551            & 100\_0.1 (50\%)                                              \\
+            20144            & original (50\%)                                              \\
+            20343            & 100\_0.1 (33.3\%) or 100\_1.0 (33.3\%)                       \\
+            12761            & original (33.3\%) or 100\_1.0 (33.3\%)                       \\
+            22381            & 100\_0.1 (83.3\%)                                            \\
+            10821            & 100\_0.1 (100\%)                                             \\
+            18448            & original (100\%)                                             \\
+            17173            & original (66.7\%)                                            \\
+            13152            & original (66.7\%)                                            \\
+            20272            & original (100\%)                                             \\
+            11310            & 100\_0.1 (66.7\%)                                            \\
+            14183            & 100\_1.0 (50\%)                                              \\
+            10622            & original (50\%)                                              \\
+            13123            & original (100\%)                                             \\
+            19181            & 100\_1.0 (83.3\%)                                            \\
+            16920            & 100\_0.1 (100\%)                                             \\
+            11308            & original (50\%)                                              \\
+            14016            & original (83.3\%)                                            \\
+            21029            & original (100\%)                                             \\
+            18355            & original (33.3\%) or 100\_0.15 (33.3\%) or 100\_0.2 (33.3\%) \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{\label{unfiltered-table} Best captions per image in the unfiltered imageCLEF test set. }
 \end{table}
 
-While the captions themselves can be seen in the Jupyter Notebook files, the aim of the questionnaire was to reveal which model or models performed the best on which test set. Therefore, the results presented here are divided between the sets and include only the information on which model's caption was deemed the best, as well as how many people voted for it. Table 1 contains the information for the unfiltered imageCLEF set, Table 2 - for the filtered one, and Table 3 for Flickr8k. Image names are the file names without the .jpg extension. In some cases more than one model's caption received the same amount of votes, or the winning caption was generated by more than one model. 
+While the captions themselves can be seen in the Jupyter Notebook files, the aim of the questionnaire was to reveal which model or models performed the best on which test set. Therefore, the results presented here are divided between the sets and include only the information on which model's caption was deemed the best, as well as how many people voted for it. Table 1 contains the information for the unfiltered imageCLEF set, Table 2 - for the filtered one, and Table 3 for Flickr8k. Image names are the file names without the .jpg extension. In some cases more than one model's caption received the same amount of votes, or the winning caption was generated by more than one model.
 
 \begin{table}[h]
-\begin{center}
-\begin{tabular}{|p{1cm}|p{4.5cm}|}
-\hline \bf Image & \bf Best model (\% responses) \\ \hline
-40416 & original (83.3\%)  \\
-39158 & original (50\%)  \\
-25053 & original (83.3\%)  \\
-30620 & 100\_1.0 (66.7\%)  \\
-32397 & 100\_0.2 (66.7\%) \\
-38937 & original (50\%) \\
-39005 & 100\_0.1 (33.3\%) or 100\_0.15 (33.3\%) or 100\_0.2 (33.3\%) \\
-40120 & original (66.7\%) \\
-23588 & 100\_1.0 (83.3\%)  \\
-39472 & 100\_0.1 (66.7\%)  \\
-30138 & original (50\%)  \\
-40202 & 100\_0.1 (83.3\%)  \\
-35895 & original (66.7\%)  \\
-32663 & 100\_0.2 (83.3\%)   \\
-30705 & original (83.3\%) \\
-38081 & 100\_0.15 (66.7\%) \\
-31571 & original (100\%) \\
-35858 & original (66.7\%) \\
-37836 & 100\_0.1 (33.3\%) or 100\_0.15 (33.3\%) \\
-39239 & 100\_0.15, 100\_0.2, and 100\_1.0 (50\%)\footnote{These models generated identical captions.} \\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{filtered-table} Best captions per image in the filtered imageCLEF test set. }
+    \begin{center}
+        \begin{tabular}{|p{1cm}|p{4.5cm}|}
+            \hline \bf Image & \bf Best model (\% responses)                                                                 \\ \hline
+            40416            & original (83.3\%)                                                                             \\
+            39158            & original (50\%)                                                                               \\
+            25053            & original (83.3\%)                                                                             \\
+            30620            & 100\_1.0 (66.7\%)                                                                             \\
+            32397            & 100\_0.2 (66.7\%)                                                                             \\
+            38937            & original (50\%)                                                                               \\
+            39005            & 100\_0.1 (33.3\%) or 100\_0.15 (33.3\%) or 100\_0.2 (33.3\%)                                  \\
+            40120            & original (66.7\%)                                                                             \\
+            23588            & 100\_1.0 (83.3\%)                                                                             \\
+            39472            & 100\_0.1 (66.7\%)                                                                             \\
+            30138            & original (50\%)                                                                               \\
+            40202            & 100\_0.1 (83.3\%)                                                                             \\
+            35895            & original (66.7\%)                                                                             \\
+            32663            & 100\_0.2 (83.3\%)                                                                             \\
+            30705            & original (83.3\%)                                                                             \\
+            38081            & 100\_0.15 (66.7\%)                                                                            \\
+            31571            & original (100\%)                                                                              \\
+            35858            & original (66.7\%)                                                                             \\
+            37836            & 100\_0.1 (33.3\%) or 100\_0.15 (33.3\%)                                                       \\
+            39239            & 100\_0.15, 100\_0.2, and 100\_1.0 (50\%)\footnote{These models generated identical captions.} \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{\label{filtered-table} Best captions per image in the filtered imageCLEF test set. }
 \end{table}
 
-As can be noticed in Table 1, the majority of the "good" captions for the unfiltered imageCLEF set were generated by the original, non-fine-tuned model, or by the one with a 10\% filter. Some captions from the model fine-tuned on nonfiltered data turned out to have been rated high as well. Finally, other models' captions were rated as good when they overlapped with the original model's caption. Overall, while the judgements are split rather evenly, the original model seems to generate better captions for this test set. It is worth pointing out that relatively few captions were unanimously voted best. 
+As can be noticed in Table 1, the majority of the "good" captions for the unfiltered imageCLEF set were generated by the original, non-fine-tuned model, or by the one with a 10\% filter. Some captions from the model fine-tuned on non-filtered data turned out to have been rated high as well. Finally, other models' captions were rated as good when they overlapped with the original model's caption. Overall, while the judgements are split rather evenly, the original model seems to generate better captions for this test set. It is worth pointing out that relatively few captions were unanimously voted best.
 
-When it comes to the filtered imageCLEF test set (Table 2), where a maximum of 10\% tokens in the original caption could be unknown tokens, the spectrum of what models' captions were considered good is even wider. There was only one case where one caption was voted best by all the participants. Half of the best captions were generated by the original model, and half by various fine-tuned ones, with none of them being a clear front-runner in this case. 
+When it comes to the filtered imageCLEF test set (Table 2), where a maximum of 10\% tokens in the original caption could be unknown tokens, the spectrum of what models' captions were considered good is even wider. There was only one case where one caption was voted best by all the participants. Half of the best captions were generated by the original model, and half by various fine-tuned ones, with none of them being a clear front-runner in this case.
 
-Finally, when it comes to the original Flickr8k-based test set, as seen in Table 3, the original model without fine-tuning performed best, although there were instances where the 10\% or 20\% fine-tuned models generated better captions. Many of the original model's captions were also chosen unanimously. 
+Finally, when it comes to the original Flickr8k-based test set, as seen in Table 3, the original model without fine-tuning performed best, although there were instances where the 10\% or 20\% fine-tuned models generated better captions. Many of the original model's captions were also chosen unanimously.
 
 \begin{table}[h]
-\begin{center}
-\begin{tabular}{|p{2.5cm}|p{3cm}|}
-\hline \bf Image & \bf Best model (\% responses) \\ \hline
-2116444946[...] & original (100\%)  \\
-2316097768[...] & original (100\%)  \\
-2439384468[...] & original (66.7\%)  \\
-2112921744[...] & 100\_0.2 (50\%)  \\
-2392460773[...] & original (100\%) \\
-2434006663[...] & original (100\%) \\
-2308256827[...] & original (100\%) \\
-2111360187[...] & original (66.7\%) \\
-2271671533[...] & original (66.7\%)  \\
-2328616978[...] & original (100\%)  \\
-2456907314[...] & original (66.7\%)  \\
-2229179070[...] & 100\_0.1 (100\%)  \\
-2279980395[...] & 100\_0.1 (88.3\%)  \\
-2393971707[...] & original (83.3\%)   \\
-211277478[...] & 100\_0.1 (50\%) \\
-2337919839[...] & original (83.3\%) \\
-2447035752[...] & original (50\%) \\
-23445819[...] & 100\_0.2 (66.7\%) \\
-2448210587[...] & original (33.3\%) \\
-2445654384[...] & 100\_0.1 (50\%) or 100\_0.2 (50\%)\\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{flickr-table} Best captions per image in the Flickr8k test set. }
+    \begin{center}
+        \begin{tabular}{|p{2.5cm}|p{3cm}|}
+            \hline \bf Image & \bf Best model (\% responses)      \\ \hline
+            2116444946[...]  & original (100\%)                   \\
+            2316097768[...]  & original (100\%)                   \\
+            2439384468[...]  & original (66.7\%)                  \\
+            2112921744[...]  & 100\_0.2 (50\%)                    \\
+            2392460773[...]  & original (100\%)                   \\
+            2434006663[...]  & original (100\%)                   \\
+            2308256827[...]  & original (100\%)                   \\
+            2111360187[...]  & original (66.7\%)                  \\
+            2271671533[...]  & original (66.7\%)                  \\
+            2328616978[...]  & original (100\%)                   \\
+            2456907314[...]  & original (66.7\%)                  \\
+            2229179070[...]  & 100\_0.1 (100\%)                   \\
+            2279980395[...]  & 100\_0.1 (88.3\%)                  \\
+            2393971707[...]  & original (83.3\%)                  \\
+            211277478[...]   & 100\_0.1 (50\%)                    \\
+            2337919839[...]  & original (83.3\%)                  \\
+            2447035752[...]  & original (50\%)                    \\
+            23445819[...]    & 100\_0.2 (66.7\%)                  \\
+            2448210587[...]  & original (33.3\%)                  \\
+            2445654384[...]  & 100\_0.1 (50\%) or 100\_0.2 (50\%) \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{\label{flickr-table} Best captions per image in the Flickr8k test set. }
 \end{table}
 
-When it comes to the comments left by the respondents after each section, they were not very positive. The captions in the first content section were judged as "unfitting," "strange," "ungrammatical," "inaccurate," "nonsensical," or "confusing," with some of the respondents admitting that the mismatch between the image and captions made them anxious or made their "brain hurt." For the second content section, some people considered the captions better, and some worse than previously, and the feeling of anxiety persisted here too. In addition, half of the respondents pointed out that the captions tend to include people in the descriptions even when there are no people in the images. It seems that the impressions of the captions in the last content section were better: while people said that they were still "strange," "weird," or "confusing," they also admitted that the verbs in the sentences tended to be accurate descriptions of the events in the images, and that they were overall "somewhat accurate." The person who expressed their feelings of anxiety previously now said that they "started to get used to them," which could also be a consequence of there being a smaller mis-match between the images and the captions. 
+When it comes to the comments left by the respondents after each section, they were not very positive. The captions in the first content section were judged as "unfitting," "strange," "ungrammatical," "inaccurate," "nonsensical," or "confusing," with some of the respondents admitting that the mismatch between the image and captions made them anxious or made their "brain hurt." For the second content section, some people considered the captions better, and some worse than previously, and the feeling of anxiety persisted here too. In addition, half of the respondents pointed out that the captions tend to include people in the descriptions even when there are no people in the images. It seems that the impressions of the captions in the last content section were better: while people said that they were still "strange," "weird," or "confusing," they also admitted that the verbs in the sentences tended to be accurate descriptions of the events in the images, and that they were overall "somewhat accurate." The person who expressed their feelings of anxiety previously now said that they "started to get used to them," which could also be a consequence of there being a smaller mismatch between the images and the captions.
 
-In the final remarks many of the respondents expressed their dissatisfaction with the overall quality of the captions, leaving comments such as "r u b b i s h" or "my brain melted." Two people mentioned again how the captions would include people despite there not being any in the images. One person said that the simpler captions or images were clear, while the more complex ones were problematic or mismatched. Another person said that these "didn't sound like human-written captions," and yet another that they oftentimes "missed the essence of the picure."  
+In the final remarks many of the respondents expressed their dissatisfaction with the overall quality of the captions, leaving comments such as "r u b b i s h" or "my brain melted." Two people mentioned again how the captions would include people despite there not being any in the images. One person said that the simpler captions or images were clear, while the more complex ones were problematic or mismatched. Another person said that these "didn't sound like human-written captions," and yet another that they oftentimes "missed the essence of the picure."
 
-Overall, the original model performed best on the original test set. The most captions generated by fine-tuned models were selected as best for the filtered imageCLEF test set. The unfiltered test set was also fairly balanced between the fine-tuned and original models. While for the unfiltered data the unfiltered and 10\% fine-tuned models can be identified as the best out of the fine-tuned ones, the same is impossible to determine for the filtered test set. From these results it can be concluded that while fine-tuning does improve the quality of the captions somewhat (both for imageCLEF and Flickr8k), it does not have that effect for every image. Judging by the open responses from the participants, the captions generated for Flickr8k were the least wrong, but their quality was still low, and the ones for imageCLEF were even worse. 
+Overall, the original model performed best on the original test set. The most captions generated by fine-tuned models were selected as best for the filtered imageCLEF test set. The unfiltered test set was also fairly balanced between the fine-tuned and original models. While for the unfiltered data the unfiltered and 10\% fine-tuned models can be identified as the best out of the fine-tuned ones, the same is impossible to determine for the filtered test set. From these results it can be concluded that while fine-tuning does improve the quality of the captions somewhat (both for imageCLEF and Flickr8k), it does not have that effect for every image. Judging by the open responses from the participants, the captions generated for Flickr8k were the least wrong, but their quality was still low, and the ones for imageCLEF were even worse.
 
 Clearly, while some degree of improvement can be obtained by this kind of fine-tuning, it is far from perfect and the captions rarely match the images. This is likely due to the disparity between the kinds of images in the two sets. Another clue to that being a major issue is the models' tendency to - as pointed out by the respondents - insert people into captions when there were none in the original image. A large portion of the captions in the Flickr8k dataset are constructed that way, and it must be one of the things that the model learned to try to identify in the image at all cost and feature in the caption, and that the fine-tuning did not help mitigate.
 
-Finally, it is worth keeping in mind that some of the apparent weirdness of the captions may stem from the relatively small vocabulary that the models had, which was likely lacking the proper words to describe certain elements in the images, even when the ones whose captions contained many new words were filtered out. 
+Finally, it is worth keeping in mind that some of the apparent weirdness of the captions may stem from the relatively small vocabulary that the models had, which was likely lacking the proper words to describe certain elements in the images, even when the ones whose captions contained many new words were filtered out.
 
 \section{Discussion (DK)}
 
-\textit{Here we compare our results to our initial expectations and decide how they answered questions, we also contrast them with prior work (if there is any). Highlight why what we did was relevant to the field.}
+As seen in this project, domain adaption for a pretrained image captioning model can be very challenging. It was surprising, to which extent the pre-trained model was disrupted when fine-tuned on data from another domain. Even though the dataset for fine-tuning was very different than the dataset for pre-training, we hoped that the fine-tuned model would still perform better on the new domain than the original. This was not the case for multiple reasons, mentioned above. At least, we expected it to be able to generate sensible captions for most of the images and that it would only produce big mistakes for a smaller part. With the rather opposite results discussed before, two major challenges for domain adaption got highlighted. First, the model can't adapt well to a different structure of captions. This results in ungrammatical sentences, when fine-tuned on many samples from the new domain. Secondly, the model is not able to adapt to a different topic of images. That results in 'reusing' old captions on new images and not learning its image features, when fine-tuned on few samples. For a deeper analysis, it may be helpful to first fine-tune the model on a domain that is closer in one of these aspects, for example a domain, that uses a similar way of describing the images, but focuses on topics. This could test the hypothesis made in this paper.
 
 \section{Conclusions and further work (MS)}
 
-Throughout this project we have explored and tested how a CNN and LSTM-based image caption generation model could be fine-tuned, or adapted to a new domain, as represented by a somewhat different image-caption dataset. We have identified points that can be especially problematic, such as differences in the vocabulary and the subsequent generation of UNK tokens in the captions. We have determined that if the domains are too different and too much fine-tuning data is fed to the model, the generation will start to completely fail or focus only on a very narrow range of words, producing very ungrammatical captions. We have also collected human judgements and determined that while fine-tuning does slighly increase the quality of the captions on the new dataset, all of them, regardless of the model, were still considered weird, mismatched, or unnatural, and that the structure of the sentences in the original dataset may have a large influence on how they are generated even after fine-tuning (e.g. trying to feature people in every caption). 
+Throughout this project we have explored and tested how a CNN and LSTM-based image caption generation model could be fine-tuned, or adapted to a new domain, as represented by a somewhat different image-caption dataset. We have identified points that can be especially problematic, such as differences in the vocabulary and the subsequent generation of UNK tokens in the captions. We have determined that if the domains are too different and too much fine-tuning data is fed to the model, the generation will start to completely fail or focus only on a very narrow range of words, producing very ungrammatical captions. We have also collected human judgements and determined that while fine-tuning does slightly increase the quality of the captions on the new dataset, all of them, regardless of the model, were still considered weird, mismatched, or unnatural, and that the structure of the sentences in the original dataset may have a large influence on how they are generated even after fine-tuning (e.g. trying to feature people in every caption).
 
 While we have addressed the issues that we raised in the introduction, we were not able to explore all the possible variables in domain adaptation of models of this kind, as it was beyond the scope of this project. However, we are certain that it would be very interesting to see how other hyperparameters than just the training data size can influence the outcome, and what the interplay between them could be. It would also be fascinating to see similar research pertaining to other model architectures, especially trying to identify the optimal hyperparameters for fine-tuning transformer-based image caption generation models. Finally, it would be interesting to explore other potential ways of dealing with the vocabulary mismatch between different datasets.
-
-\begin{table}
-\centering
-\begin{tabular}{lc}
-\hline
-\textbf{This is} & \textbf{a table}\\
-\hline
-a table & with things \\
-and even & more things  \\\hline
-\end{tabular}
-\caption{Example table.}
-\label{tab:accents}
-\end{table}
 
 % Entries for the entire Anthology, followed by custom entries
 \bibliography{anthology,custom}
@@ -238,19 +277,19 @@ and even & more things  \\\hline
 \textit{Here we have our statement of who did what.}
 While really detailed information on who developed what is available in the code, the code is not the only thing that we shared work on. Below one can find the details of who contributed what to the project.
 \begin{enumerate}
-    \item \textbf{Developing project ideas:} both Dominik and Maria. Selecting the initial ideas from the ones suggested in the course page mostly by Dominik, ideas about working with comicbooks and contacting researchers related to that by Maria. Final idea selected under the advice from Nikolai and Simon by both project authors. 
+    \item \textbf{Developing project ideas:} both Dominik and Maria. Selecting the initial ideas from the ones suggested in the course page mostly by Dominik, ideas about working with comicbooks and contacting researchers related to that by Maria. Final idea selected under the advice from Nikolai and Simon by both project authors.
     \item \textbf{Setting up resources:} figuring out how to access the datasets used in the project by Dominik, using the existing code by Nikolai both by Maria and Dominik.
-    \item \textbf{Code:} detailed information on code contribution can be found in code documentation. 
-    \begin{enumerate}
-        \item Evaluation Jupyter Notebooks: Maria
-        \item Dataset classes: Dominik
-        \item Relation filters: Maria and code shared by Simon
-        \item Fine-tuning loop: adapted by Maria and Dominik from Nikolai's code.
-        \item Models and some preprocessing: Nikolai's code.
-        \item Caption generation and attention visualization: Nikolai's code, with changes by Maria and Dominik.
-        \item Division of the code into separate files, turning it into classes: Dominik.
-        \item Documentation: Maria with Dominik's help.
-    \end{enumerate}
+    \item \textbf{Code:} detailed information on code contribution can be found in code documentation.
+          \begin{enumerate}
+              \item Evaluation Jupyter Notebooks: Maria
+              \item Dataset classes: Dominik
+              \item Relation filters: Maria and code shared by Simon
+              \item Fine-tuning loop: adapted by Maria and Dominik from Nikolai's code.
+              \item Models and some preprocessing: Nikolai's code.
+              \item Caption generation and attention visualization: Nikolai's code, with changes by Maria and Dominik.
+              \item Division of the code into separate files, turning it into classes: Dominik.
+              \item Documentation: Maria with Dominik's help.
+          \end{enumerate}
     \item \textbf{Questionnaire:} Maria.
     \item \textbf{Evaluation:} evaluation of the outputs of the notebooks by Dominik and Maria (for the questionnaire), evaluation of questionnaire answers by Maria.
     \item \textbf{Writing up:} both Dominik and Maria. Abstract by Maria (cannot put the initials there). While the initials signify the person who wrote most of the section, small changes by the other person are possible. Some sections' authorship is shared; in that case a footnote is put at the end of the part written by one person.
